@@ -5,7 +5,7 @@
 - Invite discord bot to guild.
 - `docker pull wardpearce/paycord`
 - Create `.env` file & provided all the needed [details](#env-file-config).
-- `docker run -d -p 56733:80 wardpearce/paycord --name=paycord.service -v $PWD:/app paycord.service`
+- `sudo docker run -d -p 56733:80 -v $PWD:/app wardpearce/paycord`
 - Proxy exposed port.
 
 ## Env file config
