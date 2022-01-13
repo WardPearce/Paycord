@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Karna.ge</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&amp;display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fonts/fontawesome-all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body>
+    <div class="container d-md-flex justify-content-md-center" style="margin-top: 25px;">
+        <div class="col-md-6 col-lg-5 col-xl-5">
+            <div class="card">
+                <div class="card-body"><img src="{{ url_for('static', filename='img/banner-light.png') }}" style="width: 100%;">
+                    <div style="margin-top: 10px;border-bottom: 2px solid var(--bs-gray);"></div>
+                    {% if 'discord' in session %}
+                        <p style="margin-top: 10px;margin-bottom: 0;">
+                            Welcome <strong>{{ session['discord']['username'] }}&nbsp;</strong>
+                            -&nbsp;<a class="link-info" href="#">Manage subscription</a>&nbsp;
+                            -&nbsp;<a class="link-info" href="/discord/logout">Logout</a>
+                        </p>
+                    {% else %}
+                        <a class="btn btn-primary" href="/discord/login" style="margin-top: 10px;"><i class="fas fa-sign-in-alt"></i>&nbsp;Login with Discord</a>
+                    {% endif %}
+                    <div style="margin-top: 10px;border-bottom: 2px solid var(--bs-gray);"></div>
+                    <div class="card package">
+                        <div class="card-body">
+                            <h4 class="card-title">Supporter tier</h4>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere ut velit sit amet ultrices. Etiam bibendum felis a justo auctor, vel sagittis ex dignissim. Quisque tempor in massa id vehicula.</p>
+                            <form><button class="btn btn-primary" type="button" style="width: 100%;">Buy for 1 USD</button></form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+</body>
+
+</html>

@@ -29,6 +29,11 @@ discord = oauth.register(
 )
 
 
+@app.route("/")
+def index():
+    return render_template("index.html", session=session)
+
+
 @app.route("/discord/login")
 def login():
     redirect_uri = url_for("authorize", _external=True)
@@ -37,7 +42,7 @@ def login():
 
 @app.route("/discord/logout")
 def logout():
-    session.pop("discord")
+    session.pop("discord", None)
     return redirect("/")
 
 
@@ -45,13 +50,31 @@ def logout():
 def authorize():
     token = discord.authorize_access_token()
     user = discord.get('/api/users/@me', token=token).json()
-    session["discord_id"] = user["id"]
+    session["discord"] = user
     return redirect("/")
 
 
-@app.route("/subscription/<product_id>/<int:given_amount>", methods=["POST"])
-def order(product_id: str, given_amount: int):
-    if "discord_id" not in session:
+@app.route("/portal")
+def portal():
+    if "discord" not in session:
+        abort(403)
+
+    user = db.table("user").search(
+        where("discord_id") == session["discord"]["id"]
+    )
+    if user:
+        billing_session = stripe.billing_portal.Session.create(
+            customer=user[0]["customer_id"],
+            return_url=url_for("index", _external=True)
+        )
+        return redirect(billing_session.url)
+    else:
+        abort(400)
+
+
+@app.route("/subscription/<product_id>", methods=["POST"])
+def order(product_id: str):
+    if "discord" not in session:
         abort(403)
 
     config = db.table("config").all()
@@ -62,30 +85,42 @@ def order(product_id: str, given_amount: int):
     if not product:
         abort(404)
 
-    if product[0]["min_price"] > given_amount:
-        abort(400)
+    user = db.table("user").search(
+        where("discord_id") == session["discord"]["id"]
+    )
+    if user:
+        customer_id = user[0]["customer_id"]
+    else:
+        customer_id = None
 
     checkout_session = stripe.checkout.Session.create(
         line_item=[{
             "price_data": {
                 "product_data": {"name": product[0]["name"]},
-                "unit_amount": given_amount,
+                "unit_amount": product[0]["price"],
                 "currency": config[0]["currency"],
                 "recurring": {"interval": "month", "interval_count": 1}
             },
             "quantity": 1,
             "adjustable_quantity": {"enabled": False}
         }],
+        customer=customer_id,
         payment_method_types=["card"],
         mode="subscription",
         subscription_data={},
         success_url=request.host_url + "order/success",
         cancel_url=request.host_url + "order/cancel",
         metadata={
-            "discord_id": session["discord_id"],
+            "discord_id": session["discord"]["id"],
             "role_id": product[0]["role_id"]
         }
     )
+
+    if not user:
+        db.table("user").insert({
+            "discord_id": session["discord"]["id"],
+            "customer_id": checkout_session.customer
+        })
 
     return redirect(checkout_session.url)
 

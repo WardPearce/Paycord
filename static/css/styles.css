@@ -1,0 +1,8 @@
+.package {
+  margin-top: 15px;
+}
+
+.package .card-body {
+  background-color: var(--bs-gray-900);
+}
+
