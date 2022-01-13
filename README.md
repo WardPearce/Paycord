@@ -37,6 +37,8 @@ export STRIPE_API_KEY="..."
 - DISCORD_API_URL - optional, by default "https://discord.com/api"
 - LOGO_URL - optional, by default "https://i.imgur.com/d5SBQ6v.png"
 - PAGE_NAME - optional, by default "Paycord"
+- SUBSCRIPTION_RECURRENCE - optional, by default "month" ([Supported recurrences](https://stripe.com/docs/api/prices/object#price_object-recurring))
+- SUBSCRIPTION_INTERVAL - optional, by default 1
 
 ## TODOs
 - Allow one package to have multiple roles.

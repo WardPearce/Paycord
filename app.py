@@ -17,6 +17,9 @@ CURRENCY = os.getenv("CURRENCY", "USD")
 PAGE_NAME = os.getenv("PAGE_NAME", "Paycord")
 LOGO_URL = os.getenv("LOGO_URL", "https://i.imgur.com/d5SBQ6v.png")
 ROOT_DISCORD_IDS = os.environ["ROOT_DISCORD_IDS"].split(",")
+SUBSCRIPTION_RECURRENCE = os.getenv("SUBSCRIPTION_RECURRENCE", "month")
+SUBSCRIPTION_INTERVAL = int(os.getenv("SUBSCRIPTION_INTERVAL", 1))
+
 
 app = Flask(__name__)
 oauth = OAuth(app)
@@ -173,7 +176,10 @@ def order(product_id: str):
                 "product_data": {"name": product[0]["name"]},
                 "unit_amount": int(int(product[0]["price"]) / 0.01),
                 "currency": CURRENCY,
-                "recurring": {"interval": "month", "interval_count": 1}
+                "recurring": {
+                    "interval": SUBSCRIPTION_RECURRENCE,
+                    "interval_count": SUBSCRIPTION_INTERVAL
+                }
             },
             "quantity": 1,
             "adjustable_quantity": {"enabled": False}
