@@ -4,9 +4,11 @@ import requests
 from flask import (
     Flask, render_template, abort, redirect, request, url_for, session
 )
+from functools import wraps
 from tinydb import TinyDB, where
 from authlib.integrations.flask_client import OAuth
 from dotenv import dotenv_values
+from uuid import uuid4
 
 
 env = dotenv_values(".env")
@@ -17,6 +19,7 @@ app.secret_key = env["SESSION_SECRET"]
 oauth = OAuth(app)
 stripe.api_key = env["STRIPE_API_KEY"]
 db = TinyDB("paycord_db.json")
+root_discord_ids = env["ROOT_DISCORD_IDS"].split(",")  # type: ignore
 
 discord = oauth.register(
     name="discord",
@@ -29,9 +32,51 @@ discord = oauth.register(
 )
 
 
+def root_required(func_):
+    @wraps(func_)
+    def decorated_function(*args, **kwargs):
+        if ("discord" not in session or
+                session["discord"]["id"] not in root_discord_ids):
+            abort(403)
+
+        return func_(*args, **kwargs)
+
+    return decorated_function
+
+
+@app.route("/admin/add", methods=["POST"])
+@root_required
+def admin_add():
+    payload = request.form
+    db.table("products").insert({
+        "product_id": str(uuid4()),
+        "name": payload["name"],
+        "price": payload["price"],
+        "description": payload["description"],
+        "role_id": payload["role_id"]
+    })
+    return redirect("/")
+
+
 @app.route("/")
 def index():
-    return render_template("index.html", session=session)
+    if "discord" in session:
+        user = db.table("user").search(
+            where("discord_id") == session["discord"]["id"]
+        )
+        is_root = session["discord"]["id"] in root_discord_ids
+    else:
+        user = None
+        is_root = False
+
+    return render_template(
+        "index.html",
+        session=session,
+        user=user,
+        is_root=is_root,
+        products=db.table("products").all(),
+        currency=env["CURRENCY"]
+    )
 
 
 @app.route("/discord/login")
@@ -77,10 +122,6 @@ def order(product_id: str):
     if "discord" not in session:
         abort(403)
 
-    config = db.table("config").all()
-    if config is None:
-        abort(500)
-
     product = db.table("products").search(where("product_id") == product_id)
     if not product:
         abort(404)
@@ -98,7 +139,7 @@ def order(product_id: str):
             "price_data": {
                 "product_data": {"name": product[0]["name"]},
                 "unit_amount": product[0]["price"],
-                "currency": config[0]["currency"],
+                "currency": env["CURRENCY"],
                 "recurring": {"interval": "month", "interval_count": 1}
             },
             "quantity": 1,
@@ -156,13 +197,15 @@ def event():
         return (f"{env['DISCORD_API_URL']}/guilds/{env['DISCORD_GUILD_ID']}"
                 f"/members/{metadata['discord_id']}/roles/{metadata['role_id']}")
 
-    if event["type"] == "checkout.session.completed":
+    if event["type"] in ("checkout.session.completed", "invoice.paid"):
         metadata = get_metadata()
         requests.put(
             format_url(),
             headers={"Authorization": f"Bot {env['DISCORD_BOT_TOKEN']}"}
         )
-    elif event["type"] == "checkout.session.expired":
+    elif event["type"] in (
+                           "invoice.payment_failed",
+                           "invoice.payment_action_required"):
         metadata = get_metadata()
         requests.delete(
             format_url(),
