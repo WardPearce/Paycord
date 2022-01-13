@@ -90,7 +90,8 @@ def index():
         active_products=active_products,
         is_root=is_root,
         products=db.table("products").all(),
-        currency=env["CURRENCY"]
+        currency=env["CURRENCY"],
+        order_status=request.args.get("order", None)
     )
 
 
