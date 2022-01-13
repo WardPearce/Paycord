@@ -175,7 +175,6 @@ def order(product_id: str):
         customer=customer_id,
         payment_method_types=["card"],
         mode="subscription",
-        subscription_data={},
         success_url=request.host_url + "order/success",
         cancel_url=request.host_url + "order/cancel",
         metadata=metadata
