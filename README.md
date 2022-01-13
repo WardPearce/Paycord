@@ -17,3 +17,8 @@
 - STRIPE_API_KEY - required
 - CURRENCY - optional, by default "USD" [Supported currencies](https://stripe.com/docs/currencies)
 - DISCORD_API_URL - optional, by default "https://discord.com/api"
+
+# TODOs
+- Allow one package to have multiple roles.
+- Form validation for root users (Didn't think this was super important, but would be nice to implement with wtforms.)
+- Allow upgrading of packages.
