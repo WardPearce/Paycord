@@ -15,22 +15,21 @@ from uuid import uuid4
 DISCORD_API_URL = "https://discord.com/api"
 CURRENCY = "USD"
 
-
 app = Flask(__name__)
-app.secret_key = secrets.token_urlsafe(54)
-
 oauth = OAuth(app)
-stripe.api_key = os.environ["STRIPE_API_KEY"]
 db = TinyDB("paycord_db.json")
+
+app.secret_key = secrets.token_urlsafe(54)
+stripe.api_key = os.environ["STRIPE_API_KEY"]
 root_discord_ids = os.environ["ROOT_DISCORD_IDS"].split(",")
 
 discord = oauth.register(
     name="discord",
     client_id=os.environ["DISCORD_CLIENT_ID"],
     client_secret=os.environ["DISCORD_CLIENT_SECRET"],
-    access_token_url="https://discord.com/api/oauth2/token",
-    authorize_url="https://discord.com/api/oauth2/authorize",
-    api_base_url="https://discord.com/api",
+    access_token_url=f"{os.getenv('DISCORD_API_URL', DISCORD_API_URL)}/oauth2/token",  # noqa: E501
+    authorize_url=f"{os.getenv('DISCORD_API_URL', DISCORD_API_URL)}/oauth2/authorize",  # noqa: E501
+    api_base_url=os.getenv("DISCORD_API_URL", DISCORD_API_URL),
     client_kwargs={"scope": "identify"}
 )
 
