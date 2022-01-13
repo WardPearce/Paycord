@@ -1,7 +1,7 @@
 # Setup
 - Create stripe account.
 - On stripe dashboard, go Developers ➡️ Webhooks ➡️ Add endpoint ➡️ endpoint URL ➡️ "myUrlHere/event" ➡️ "checkout.session.completed" & "customer.subscription.deleted" events required.
-- On stripe dashboard, go Settings ➡️ Customer port ➡️ Ensure "Update subscriptions" is all disabled ➡️ then update your "Business information"
+- On stripe dashboard, go Settings ➡️ Customer portal ➡️ Ensure "Update subscriptions" is all disabled ➡️ then update your "Business information"
 - On discord developer portal, go OAuth2 ➡️ General ➡️ Redirects ➡️ "myUrlHere/discord/authorize".
 - Create `.env` file & provided all the needed [details](#env-file-config).
 - Edit `start.sh`, editing port & app name.
