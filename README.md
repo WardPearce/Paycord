@@ -3,10 +3,9 @@
 - On stripe dashboard, go Settings ➡️ Customer portal ➡️ Ensure "Update subscriptions" is all disabled ➡️ then update your "Business information"
 - On discord developer portal, go OAuth2 ➡️ General ➡️ Redirects ➡️ "myUrlHere/discord/authorize".
 - Invite discord bot to guild.
+- `docker pull wardpearce/paycord`
 - Create `.env` file & provided all the needed [details](#env-file-config).
-- Edit `start.sh`, editing port & app name.
-- Make `start.sh` executable.
-- Run `./start.sh`.
+- `docker run -d -p 56733:80 wardpearce/paycord --name=paycord.service -v $PWD:/app paycord.service`
 - Proxy exposed port.
 
 ## Env file config
