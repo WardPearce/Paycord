@@ -110,7 +110,7 @@ def logout():
 @app.route("/discord/authorize")
 def authorize():
     token = discord.authorize_access_token()
-    user = discord.get('/api/users/@me', token=token).json()
+    user = discord.get("/api/users/@me", token=token).json()
     session["discord"] = user
     return redirect("/")
 
@@ -196,7 +196,7 @@ def cancel():
 @app.route("/event", methods=["POST"])
 def event():
     payload = request.data
-    signature = request.headers['STRIPE_SIGNATURE']
+    signature = request.headers["STRIPE_SIGNATURE"]
     try:
         event = stripe.Webhook.construct_event(
             payload, signature, env["STRIPE_WEBHOOK_SECRET"]
