@@ -1,4 +1,5 @@
 import stripe
+import requests
 
 from flask import (
     Flask, render_template, abort, redirect, request, url_for, session
@@ -54,7 +55,7 @@ def order(product_id: str, given_amount: int):
         abort(403)
 
     config = db.table("config").all()
-    if stripe.api_key is None or config is None:
+    if config is None:
         abort(500)
 
     product = db.table("products").search(where("product_id") == product_id)
@@ -64,7 +65,7 @@ def order(product_id: str, given_amount: int):
     if product[0]["min_price"] > given_amount:
         abort(400)
 
-    session = stripe.checkout.Session.create(
+    checkout_session = stripe.checkout.Session.create(
         line_item=[{
             "price_data": {
                 "product_data": {"name": product[0]["name"]},
@@ -80,10 +81,13 @@ def order(product_id: str, given_amount: int):
         subscription_data={},
         success_url=request.host_url + "order/success",
         cancel_url=request.host_url + "order/cancel",
-        metadata={"discord_id": session["discord_id"]}
+        metadata={
+            "discord_id": session["discord_id"],
+            "role_id": product[0]["role_id"]
+        }
     )
 
-    return redirect(session.url)
+    return redirect(checkout_session.url)
 
 
 @app.route("/order/success")
@@ -98,10 +102,6 @@ def cancel():
 
 @app.route("/event", methods=["POST"])
 def event():
-    config = db.table("config").all()
-    if stripe.api_key is None or config is None:
-        abort(500)
-
     payload = request.data
     signature = request.headers['STRIPE_SIGNATURE']
     try:
@@ -111,9 +111,27 @@ def event():
     except Exception:
         abort(400)
 
-    if event["type"] == "checkout.session.completed":
-        stripe.checkout.Session.retrieve(
+    def get_metadata() -> dict:
+        session = stripe.checkout.Session.retrieve(
             event["data"]["object"].id, expand=["line_items"]
+        )
+        return session.metadata
+
+    def format_url() -> str:
+        return (f"{env['DISCORD_API_URL']}/guilds/{env['DISCORD_GUILD_ID']}"
+                f"/members/{metadata['discord_id']}/roles/{metadata['role_id']}")
+
+    if event["type"] == "checkout.session.completed":
+        metadata = get_metadata()
+        requests.put(
+            format_url(),
+            headers={"Authorization": f"Bot {env['DISCORD_BOT_TOKEN']}"}
+        )
+    elif event["type"] == "checkout.session.expired":
+        metadata = get_metadata()
+        requests.delete(
+            format_url(),
+            headers={"Authorization": f"Bot {env['DISCORD_BOT_TOKEN']}"}
         )
 
     return {"success": True}

@@ -3,3 +3,4 @@ stripe
 authlib
 tinydb
 python-dotenv
+requests
