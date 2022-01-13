@@ -1,5 +1,5 @@
 # Setup
-- Create `.env` file [Options here](#env-file-config).
+- Create `.env` file, [Details here](#env-file-config).
 - Edit `start.sh`, editing port & app name.
 - Make `start.sh` executable.
 - Run `./start.sh`.
