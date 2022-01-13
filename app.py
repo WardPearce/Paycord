@@ -58,6 +58,13 @@ def admin_add():
     return redirect("/")
 
 
+@app.route("/admin/delete/<product_id>", methods=["POST"])
+@root_required
+def admin_delete(product_id: str):
+    db.table("products").remove(where("product_id") == product_id)
+    return redirect("/")
+
+
 @app.route("/")
 def index():
     if "discord" in session:

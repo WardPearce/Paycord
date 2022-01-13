@@ -50,7 +50,7 @@
                                 <p>{{ product['description'] }}</p>
                                 <form><button class="btn btn-primary" type="submit" style="width: 100%;">Buy for <span style="font-weight: bold;">{{ product['price'] }} {{ currency }}</span></button></form>
                                 {% if is_root %}
-                                    <form style="margin-top: 10px;" action="/admin/delete" method="POST">
+                                    <form style="margin-top: 10px;" action="/admin/delete/{{ product['product_id'] }}" method="POST">
                                         <button class="btn btn-danger" type="submit" style="width: 100%;">Delete tier</button>
                                     </form>
                                 {% endif %}
