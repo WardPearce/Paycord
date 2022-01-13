@@ -22,7 +22,7 @@
                         <h5 style="margin-top: 5px;">Add product</h5>
                         <form action="/admin/add" method="POST">
                             <input placeholder="Display Name" type="text" class="form-control" name="name">
-                            <input placeholder="Price" type="text" class="form-control" name="price">
+                            <input placeholder="Price (in dollars)" type="text" class="form-control" name="price">
                             <input placeholder="Discord role ID" type="text" class="form-control" name="role_id">
                             <textarea style="width: 100%;" name="description" placeholder="Product description"></textarea>
                             <br>
@@ -48,7 +48,13 @@
                             <div class="card-body">
                                 <h4 class="card-title">{{ product['name'] }}</h4>
                                 <p>{{ product['description'] }}</p>
-                                <form><button class="btn btn-primary" type="submit" style="width: 100%;">Buy for <span style="font-weight: bold;">{{ product['price'] }} {{ currency }}</span></button></form>
+                                {% if 'discord' in session %}
+                                    <form action="/subscription/{{ product['product_id'] }}" method="POST">
+                                        <button class="btn btn-primary" type="submit" style="width: 100%;">Buy for <span style="font-weight: bold;">{{ product['price'] }} {{ currency }}</span></button>
+                                    </form>
+                                {% else %}
+                                    <button class="btn btn-primary" disabled style="width: 100%;">Please log in</button>
+                                {% endif %}
                                 {% if is_root %}
                                     <form style="margin-top: 10px;" action="/admin/delete/{{ product['product_id'] }}" method="POST">
                                         <button class="btn btn-danger" type="submit" style="width: 100%;">Delete product</button>

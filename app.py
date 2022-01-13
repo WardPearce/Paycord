@@ -142,10 +142,10 @@ def order(product_id: str):
         customer_id = None
 
     checkout_session = stripe.checkout.Session.create(
-        line_item=[{
+        line_items=[{
             "price_data": {
                 "product_data": {"name": product[0]["name"]},
-                "unit_amount": product[0]["price"],
+                "unit_amount": int(int(product[0]["price"]) / 0.01),
                 "currency": env["CURRENCY"],
                 "recurring": {"interval": "month", "interval_count": 1}
             },
@@ -175,12 +175,12 @@ def order(product_id: str):
 
 @app.route("/order/success")
 def success():
-    return render_template("success.html")
+    return redirect("/?order=success")
 
 
 @app.route("/order/cancel")
 def cancel():
-    return render_template("cancel.html")
+    return redirect("/?order=cancel")
 
 
 @app.route("/event", methods=["POST"])
