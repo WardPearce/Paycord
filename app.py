@@ -1,5 +1,7 @@
 import stripe
 import requests
+import os
+import secrets
 
 from flask import (
     Flask, render_template, abort, redirect, request, url_for, session
@@ -7,24 +9,25 @@ from flask import (
 from functools import wraps
 from tinydb import TinyDB, where
 from authlib.integrations.flask_client import OAuth
-from dotenv import dotenv_values
 from uuid import uuid4
 
 
-env = dotenv_values(".env")
+DISCORD_API_URL = "https://discord.com/api"
+CURRENCY = "USD"
+
 
 app = Flask(__name__)
-app.secret_key = env["SESSION_SECRET"]
+app.secret_key = secrets.token_urlsafe(54)
 
 oauth = OAuth(app)
-stripe.api_key = env["STRIPE_API_KEY"]
+stripe.api_key = os.environ["STRIPE_API_KEY"]
 db = TinyDB("paycord_db.json")
-root_discord_ids = env["ROOT_DISCORD_IDS"].split(",")  # type: ignore
+root_discord_ids = os.environ["ROOT_DISCORD_IDS"].split(",")
 
 discord = oauth.register(
     name="discord",
-    client_id=env["DISCORD_CLIENT_ID"],
-    client_secret=env["DISCORD_CLIENT_SECRET"],
+    client_id=os.environ["DISCORD_CLIENT_ID"],
+    client_secret=os.environ["DISCORD_CLIENT_SECRET"],
     access_token_url="https://discord.com/api/oauth2/token",
     authorize_url="https://discord.com/api/oauth2/authorize",
     api_base_url="https://discord.com/api",
@@ -90,7 +93,7 @@ def index():
         active_products=active_products,
         is_root=is_root,
         products=db.table("products").all(),
-        currency=env["CURRENCY"],
+        currency=os.getenv("CURRENCY", CURRENCY),
         order_status=request.args.get("order", None)
     )
 
@@ -166,7 +169,7 @@ def order(product_id: str):
             "price_data": {
                 "product_data": {"name": product[0]["name"]},
                 "unit_amount": int(int(product[0]["price"]) / 0.01),
-                "currency": env["CURRENCY"],
+                "currency": os.getenv("CURRENCY", CURRENCY),
                 "recurring": {"interval": "month", "interval_count": 1}
             },
             "quantity": 1,
@@ -199,13 +202,13 @@ def event():
     signature = request.headers["STRIPE_SIGNATURE"]
     try:
         event = stripe.Webhook.construct_event(
-            payload, signature, env["STRIPE_WEBHOOK_SECRET"]
+            payload, signature, os.environ["STRIPE_WEBHOOK_SECRET"]
         )
     except Exception:
         abort(400)
 
     def format_url(discord_id: str, role_id: str) -> str:
-        return (f"{env['DISCORD_API_URL']}/guilds/{env['DISCORD_GUILD_ID']}"
+        return (f"{os.getenv('DISCORD_API_URL', DISCORD_API_URL)}/guilds/{os.environ['DISCORD_GUILD_ID']}"  # noqa: E501
                 f"/members/{discord_id}/roles/{role_id}")
 
     if event["type"] == "checkout.session.completed":
@@ -215,7 +218,7 @@ def event():
 
         requests.put(
             format_url(metadata["discord_id"], metadata["role_id"]),
-            headers={"Authorization": f"Bot {env['DISCORD_BOT_TOKEN']}"}
+            headers={"Authorization": f"Bot {os.environ['DISCORD_BOT_TOKEN']}"}
         )
 
         db.table("subscriptions").insert({
@@ -232,7 +235,7 @@ def event():
                     subscription[0]["discord_id"],
                     subscription[0]["role_id"]
                 ),
-                headers={"Authorization": f"Bot {env['DISCORD_BOT_TOKEN']}"}
+                headers={"Authorization": f"Bot {os.environ['DISCORD_BOT_TOKEN']}"}   # noqa: E501
             )
             db.table("subscriptions").remove(
                 where("subscription_id") == event["data"]["object"].id
