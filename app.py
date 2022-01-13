@@ -207,7 +207,7 @@ def event():
         abort(400)
 
     def format_url(discord_id: str, role_id: str) -> str:
-        return (f"{os.getenv('DISCORD_API_URL', DISCORD_API_URL)}/"
+        return (f"{DISCORD_API_URL}/"
                 f"guilds/{os.environ['DISCORD_GUILD_ID']}"
                 f"/members/{discord_id}/roles/{role_id}")
 
