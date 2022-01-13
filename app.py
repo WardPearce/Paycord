@@ -195,30 +195,39 @@ def event():
     except Exception:
         abort(400)
 
-    def get_metadata() -> dict:
-        session = stripe.checkout.Session.retrieve(
-            event["data"]["object"].id
-        )
-        return session.metadata
-
-    def format_url() -> str:
+    def format_url(discord_id: str, role_id: str) -> str:
         return (f"{env['DISCORD_API_URL']}/guilds/{env['DISCORD_GUILD_ID']}"
-                f"/members/{metadata['discord_id']}/roles/{metadata['role_id']}")
+                f"/members/{discord_id}/roles/{role_id}")
 
     if event["type"] == "checkout.session.completed":
-        metadata = get_metadata()
+        metadata = (stripe.checkout.Session.retrieve(
+            event["data"]["object"].id
+        )).metadata
+
         requests.put(
-            format_url(),
+            format_url(metadata["discord_id"], metadata["role_id"]),
             headers={"Authorization": f"Bot {env['DISCORD_BOT_TOKEN']}"}
         )
-    elif event["type"] in (
-                           "invoice.payment_failed",
-                           "invoice.payment_action_required"):
-        metadata = get_metadata()
-        requests.delete(
-            format_url(),
-            headers={"Authorization": f"Bot {env['DISCORD_BOT_TOKEN']}"}
+
+        db.table("subscriptions").insert({
+            **metadata,
+            "subscription_id": event["data"]["object"].subscription,
+        })
+    elif event["type"] == "customer.subscription.deleted":
+        subscription = db.table("subscriptions").search(
+            where("subscription_id") == event["data"]["object"].id
         )
+        if subscription:
+            requests.delete(
+                format_url(
+                    subscription[0]["discord_id"],
+                    subscription[0]["role_id"]
+                ),
+                headers={"Authorization": f"Bot {env['DISCORD_BOT_TOKEN']}"}
+            )
+            db.table("subscriptions").remove(
+                where("subscription_id") == event["data"]["object"].id
+            )
 
     return {"success": True}
 
