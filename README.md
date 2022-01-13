@@ -8,7 +8,7 @@ Paid roles for discord using Stripe, Python, Flask & Docker.
 - On discord developer portal, go OAuth2 ➡️ General ➡️ Redirects ➡️ "myUrlHere/discord/authorize".
 - Invite discord bot to guild.
 - `sudo docker pull wardpearce/paycord`
-- `sudo docker run -d -p 56733:80 --name paycord -v $PWD:/app -e DISCORD_CLIENT_ID="..." -e DISCORD_CLIENT_SECRET="..." -e DISCORD_BOT_TOKEN="..." -e DISCORD_GUILD_ID="..." -e ROOT_DISCORD_IDS="...,..." -e STRIPE_WEBHOOK_SECRET="..." -e STRIPE_API_KEY="..." wardpearce/paycord`
+- `sudo docker run -d -p 56733:80 --name paycord -v $PWD:/app -e DISCORD_CLIENT_ID="..." -e DISCORD_CLIENT_SECRET="..." -e DISCORD_BOT_TOKEN="..." -e DISCORD_GUILD_ID="..." -e ROOT_DISCORD_IDS="...,..." -e STRIPE_WEBHOOK_SECRET="..." -e STRIPE_API_KEY="..." -e LOGO_URL="https://i.imgur.com/d5SBQ6v.png" -e PAGE_NAME="Paycord" wardpearce/paycord`
 - Proxy exposed port.
 ### Development
 - Git clone this repo.
@@ -25,7 +25,7 @@ export STRIPE_API_KEY="..."
 ```
 - `python app.py` to run.
 
-## Docker parameters
+## Environment variables
 - DISCORD_CLIENT_ID - required
 - DISCORD_CLIENT_SECRET - required
 - DISCORD_BOT_TOKEN - required
@@ -35,6 +35,8 @@ export STRIPE_API_KEY="..."
 - STRIPE_API_KEY - required
 - CURRENCY - optional, by default "USD" [Supported currencies](https://stripe.com/docs/currencies)
 - DISCORD_API_URL - optional, by default "https://discord.com/api"
+- LOGO_URL - optional, by default "https://i.imgur.com/d5SBQ6v.png"
+- PAGE_NAME - optional, by default "Paycord"
 
 ## TODOs
 - Allow one package to have multiple roles.

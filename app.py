@@ -14,6 +14,9 @@ from uuid import uuid4
 
 DISCORD_API_URL = os.getenv("DISCORD_API_URL", "https://discord.com/api")
 CURRENCY = os.getenv("CURRENCY", "USD")
+PAGE_NAME = os.getenv("PAGE_NAME", "Paycord")
+LOGO_URL = os.getenv("LOGO_URL", "https://i.imgur.com/d5SBQ6v.png")
+ROOT_DISCORD_IDS = os.environ["ROOT_DISCORD_IDS"].split(",")
 
 app = Flask(__name__)
 oauth = OAuth(app)
@@ -21,7 +24,6 @@ db = TinyDB("paycord_db.json")
 
 app.secret_key = secrets.token_urlsafe(54)
 stripe.api_key = os.environ["STRIPE_API_KEY"]
-root_discord_ids = os.environ["ROOT_DISCORD_IDS"].split(",")
 
 discord = oauth.register(
     name="discord",
@@ -38,7 +40,7 @@ def root_required(func_):
     @wraps(func_)
     def decorated_function(*args, **kwargs):
         if ("discord" not in session or
-                session["discord"]["id"] not in root_discord_ids):
+                session["discord"]["id"] not in ROOT_DISCORD_IDS):
             abort(403)
 
         return func_(*args, **kwargs)
@@ -79,7 +81,7 @@ def index():
                 where("discord_id") == session["discord"]["id"]
             )
         ]
-        is_root = session["discord"]["id"] in root_discord_ids
+        is_root = session["discord"]["id"] in ROOT_DISCORD_IDS
     else:
         user = None
         is_root = False
@@ -93,6 +95,8 @@ def index():
         is_root=is_root,
         products=db.table("products").all(),
         currency=CURRENCY,
+        page_name=PAGE_NAME,
+        logo_url=LOGO_URL,
         order_status=request.args.get("order", None)
     )
 
