@@ -21,9 +21,9 @@
                         <h4 style="margin-top: 10px;">Admin area</h4>
                         <h5 style="margin-top: 5px;">Add product</h5>
                         <form action="/admin/add" method="POST">
-                            <input placeholder="Display Name" type="text" class="form-control" name="name">
-                            <input placeholder="Price (in dollars)" type="text" class="form-control" name="price">
-                            <input placeholder="Discord role ID" type="text" class="form-control" name="role_id">
+                            <input placeholder="Display Name" type="text" class="form-control" name="name" required>
+                            <input placeholder="Price (in dollars)" type="text" class="form-control" name="price" required>
+                            <input placeholder="Discord role ID" type="text" class="form-control" name="role_id" required>
                             <textarea style="width: 100%;" name="description" class="form-control" placeholder="Product description"></textarea>
                             <br>
 

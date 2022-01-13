@@ -52,7 +52,7 @@ def admin_add():
         "product_id": str(uuid4()),
         "name": payload["name"],
         "price": payload["price"],
-        "description": payload["description"],
+        "description": payload.get("description", ""),
         "role_id": payload["role_id"]
     })
     return redirect("/")
