@@ -12,8 +12,8 @@ from authlib.integrations.flask_client import OAuth
 from uuid import uuid4
 
 
-DISCORD_API_URL = "https://discord.com/api"
-CURRENCY = "USD"
+DISCORD_API_URL = os.getenv("DISCORD_API_URL", "https://discord.com/api")
+CURRENCY = os.getenv("CURRENCY", "USD")
 
 app = Flask(__name__)
 oauth = OAuth(app)
@@ -27,9 +27,9 @@ discord = oauth.register(
     name="discord",
     client_id=os.environ["DISCORD_CLIENT_ID"],
     client_secret=os.environ["DISCORD_CLIENT_SECRET"],
-    access_token_url=f"{os.getenv('DISCORD_API_URL', DISCORD_API_URL)}/oauth2/token",  # noqa: E501
-    authorize_url=f"{os.getenv('DISCORD_API_URL', DISCORD_API_URL)}/oauth2/authorize",  # noqa: E501
-    api_base_url=os.getenv("DISCORD_API_URL", DISCORD_API_URL),
+    access_token_url=f"{DISCORD_API_URL}/oauth2/token",  # noqa: E501
+    authorize_url=f"{DISCORD_API_URL}/oauth2/authorize",  # noqa: E501
+    api_base_url=DISCORD_API_URL,
     client_kwargs={"scope": "identify"}
 )
 
@@ -92,7 +92,7 @@ def index():
         active_products=active_products,
         is_root=is_root,
         products=db.table("products").all(),
-        currency=os.getenv("CURRENCY", CURRENCY),
+        currency=CURRENCY,
         order_status=request.args.get("order", None)
     )
 
@@ -168,7 +168,7 @@ def order(product_id: str):
             "price_data": {
                 "product_data": {"name": product[0]["name"]},
                 "unit_amount": int(int(product[0]["price"]) / 0.01),
-                "currency": os.getenv("CURRENCY", CURRENCY),
+                "currency": CURRENCY,
                 "recurring": {"interval": "month", "interval_count": 1}
             },
             "quantity": 1,
