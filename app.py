@@ -133,13 +133,23 @@ def order(product_id: str):
     if not product:
         abort(404)
 
+    metadata = {
+        "discord_id": session["discord"]["id"],
+        "role_id": product[0]["role_id"]
+    }
+
     user = db.table("user").search(
         where("discord_id") == session["discord"]["id"]
     )
-    if user:
-        customer_id = user[0]["customer_id"]
+    if not user:
+        customer = stripe.Customer.create(metadata=metadata)
+        db.table("user").insert({
+            "discord_id": session["discord"]["id"],
+            "customer_id": customer.id
+        })
+        customer_id = customer.id
     else:
-        customer_id = None
+        customer_id = user[0]["customer_id"]
 
     checkout_session = stripe.checkout.Session.create(
         line_items=[{
@@ -158,17 +168,8 @@ def order(product_id: str):
         subscription_data={},
         success_url=request.host_url + "order/success",
         cancel_url=request.host_url + "order/cancel",
-        metadata={
-            "discord_id": session["discord"]["id"],
-            "role_id": product[0]["role_id"]
-        }
+        metadata=metadata
     )
-
-    if not user:
-        db.table("user").insert({
-            "discord_id": session["discord"]["id"],
-            "customer_id": checkout_session.customer
-        })
 
     return redirect(checkout_session.url)
 
@@ -196,7 +197,7 @@ def event():
 
     def get_metadata() -> dict:
         session = stripe.checkout.Session.retrieve(
-            event["data"]["object"].id, expand=["line_items"]
+            event["data"]["object"].id
         )
         return session.metadata
 
@@ -204,7 +205,7 @@ def event():
         return (f"{env['DISCORD_API_URL']}/guilds/{env['DISCORD_GUILD_ID']}"
                 f"/members/{metadata['discord_id']}/roles/{metadata['role_id']}")
 
-    if event["type"] in ("checkout.session.completed", "invoice.paid"):
+    if event["type"] == "checkout.session.completed":
         metadata = get_metadata()
         requests.put(
             format_url(),

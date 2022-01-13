@@ -34,7 +34,7 @@
                     {% if 'discord' in session %}
                         <p style="margin-top: 10px;margin-bottom: 0;">
                             Welcome <strong>{{ session['discord']['username'] }}&nbsp;</strong>
-                            {% if user and 'customer_id' in user %}
+                            {% if user and 'customer_id' in user[0] %}
                                 -&nbsp;<a class="link-info" href="/portal">Manage subscription</a>&nbsp;
                             {% endif %}
                             -&nbsp;<a class="link-info" href="/discord/logout">Logout</a>
