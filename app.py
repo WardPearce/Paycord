@@ -208,7 +208,8 @@ def event():
         abort(400)
 
     def format_url(discord_id: str, role_id: str) -> str:
-        return (f"{os.getenv('DISCORD_API_URL', DISCORD_API_URL)}/guilds/{os.environ['DISCORD_GUILD_ID']}"  # noqa: E501
+        return (f"{os.getenv('DISCORD_API_URL', DISCORD_API_URL)}/"
+                f"guilds/{os.environ['DISCORD_GUILD_ID']}"
                 f"/members/{discord_id}/roles/{role_id}")
 
     if event["type"] == "checkout.session.completed":
@@ -235,7 +236,9 @@ def event():
                     subscription[0]["discord_id"],
                     subscription[0]["role_id"]
                 ),
-                headers={"Authorization": f"Bot {os.environ['DISCORD_BOT_TOKEN']}"}   # noqa: E501
+                headers={
+                    "Authorization": f"Bot {os.environ['DISCORD_BOT_TOKEN']}"
+                }
             )
             db.table("subscriptions").remove(
                 where("subscription_id") == event["data"]["object"].id
