@@ -27,8 +27,8 @@ discord = oauth.register(
     name="discord",
     client_id=os.environ["DISCORD_CLIENT_ID"],
     client_secret=os.environ["DISCORD_CLIENT_SECRET"],
-    access_token_url=f"{DISCORD_API_URL}/oauth2/token",  # noqa: E501
-    authorize_url=f"{DISCORD_API_URL}/oauth2/authorize",  # noqa: E501
+    access_token_url=f"{DISCORD_API_URL}/oauth2/token",
+    authorize_url=f"{DISCORD_API_URL}/oauth2/authorize",
     api_base_url=DISCORD_API_URL,
     client_kwargs={"scope": "identify"}
 )
