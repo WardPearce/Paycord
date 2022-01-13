@@ -74,7 +74,7 @@ def index():
             where("discord_id") == session["discord"]["id"]
         )
         active_products = [
-            prod["product_id"] for prod in
+            sub["product_id"] for sub in
             db.table("subscriptions").search(
                 where("discord_id") == session["discord"]["id"]
             )
