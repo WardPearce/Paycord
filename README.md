@@ -33,7 +33,7 @@ export STRIPE_API_KEY="..."
 - ROOT_DISCORD_IDS - required
 - STRIPE_WEBHOOK_SECRET - required
 - STRIPE_API_KEY - required
-- CURRENCY - optional, by default "USD" [Supported currencies](https://stripe.com/docs/currencies)
+- CURRENCY - optional, by default "USD" ([Supported currencies](https://stripe.com/docs/currencies))
 - DISCORD_API_URL - optional, by default "https://discord.com/api"
 - LOGO_URL - optional, by default "https://i.imgur.com/d5SBQ6v.png"
 - PAGE_NAME - optional, by default "Paycord"
