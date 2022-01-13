@@ -71,15 +71,23 @@ def index():
         user = db.table("user").search(
             where("discord_id") == session["discord"]["id"]
         )
+        active_products = [
+            prod["product_id"] for prod in
+            db.table("subscriptions").search(
+                where("discord_id") == session["discord"]["id"]
+            )
+        ]
         is_root = session["discord"]["id"] in root_discord_ids
     else:
         user = None
         is_root = False
+        active_products = []
 
     return render_template(
         "index.html",
         session=session,
         user=user,
+        active_products=active_products,
         is_root=is_root,
         products=db.table("products").all(),
         currency=env["CURRENCY"]
@@ -135,7 +143,8 @@ def order(product_id: str):
 
     metadata = {
         "discord_id": session["discord"]["id"],
-        "role_id": product[0]["role_id"]
+        "role_id": product[0]["role_id"],
+        "product_id": product_id
     }
 
     user = db.table("user").search(

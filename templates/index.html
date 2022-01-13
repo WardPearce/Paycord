@@ -34,9 +34,6 @@
                     {% if 'discord' in session %}
                         <p style="margin-top: 10px;margin-bottom: 0;">
                             Welcome <strong>{{ session['discord']['username'] }}&nbsp;</strong>
-                            {% if user and 'customer_id' in user[0] %}
-                                -&nbsp;<a class="link-info" href="/portal">Manage subscription</a>&nbsp;
-                            {% endif %}
                             -&nbsp;<a class="link-info" href="/discord/logout">Logout</a>
                         </p>
                     {% else %}
@@ -49,9 +46,13 @@
                                 <h4 class="card-title">{{ product['name'] }}</h4>
                                 <p>{{ product['description'] }}</p>
                                 {% if 'discord' in session %}
-                                    <form action="/subscription/{{ product['product_id'] }}" method="POST">
-                                        <button class="btn btn-primary" type="submit" style="width: 100%;">Buy for <span style="font-weight: bold;">{{ product['price'] }} {{ currency }}</span></button>
-                                    </form>
+                                    {% if product['product_id'] not in active_products %}
+                                        <form action="/subscription/{{ product['product_id'] }}" method="POST">
+                                            <button class="btn btn-primary" type="submit" style="width: 100%;">Buy for <span style="font-weight: bold;">{{ product['price'] }} {{ currency }}</span></button>
+                                        </form>
+                                    {% else %}
+                                        <a class="btn btn-primary" href="/portal" style="width: 100%;">Manage subscription</a>
+                                    {% endif %}
                                 {% else %}
                                     <button class="btn btn-primary" disabled style="width: 100%;">Please log in</button>
                                 {% endif %}
