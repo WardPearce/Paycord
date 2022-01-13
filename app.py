@@ -10,6 +10,7 @@ from functools import wraps
 from tinydb import TinyDB, where
 from authlib.integrations.flask_client import OAuth
 from uuid import uuid4
+from currency_symbols import CurrencySymbols
 
 
 DISCORD_API_URL = os.getenv("DISCORD_API_URL", "https://discord.com/api")
@@ -97,7 +98,7 @@ def index():
         active_products=active_products,
         is_root=is_root,
         products=db.table("products").all(),
-        currency=CURRENCY,
+        currency=CurrencySymbols.get_symbol(CURRENCY),
         page_name=PAGE_NAME,
         logo_url=LOGO_URL,
         order_status=request.args.get("order", None)

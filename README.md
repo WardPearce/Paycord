@@ -47,9 +47,9 @@ export STRIPE_API_KEY="..."
 - Maybe move away from `tinydb` to `mongodb`.
 
 ## Screenshots
-![screenshot 1](https://cdn.discordapp.com/attachments/927646781670576259/931081467956719676/unknown.png)
-![screenshot 2](https://cdn.discordapp.com/attachments/927646781670576259/931081556905312276/unknown.png)
-![screenshot 3](https://cdn.discordapp.com/attachments/927646781670576259/931081819548450826/unknown.png)
+![Screenshot 1](https://i.imgur.com/brlMepv.png)
+![Screenshot 2](https://i.imgur.com/vVxEAp2.png)
+![Screenshot 3](https://i.imgur.com/qY8AGHQ.png)
 
 ## Thanks to
 - [Flask](https://pypi.org/project/Flask/) by Armin Ronacher
@@ -62,3 +62,4 @@ export STRIPE_API_KEY="..."
 - [cryptography](https://pypi.org/project/cryptography/) by The Python Cryptographic Authority and individual contributors
 - [tinydb](https://pypi.org/project/tinydb/) by Markus Siemens
 - [certifi](https://pypi.org/project/certifi/) by Kenneth Reitz
+- [currency-symbols](https://pypi.org/project/currency-symbols/) by Arshad Kazmi

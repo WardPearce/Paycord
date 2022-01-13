@@ -4,79 +4,117 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Karna.ge | Payments</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&amp;display=swap">
-    <link rel="stylesheet" href="{{ url_for('static', filename='fonts/fontawesome-all.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>{{ page_name }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            content: [
+                './templates/**/*.html',
+            ],
+            theme: {
+                container: {
+                    center: true,
+                    padding: {
+                        DEFAULT: '1.25rem',
+                        lg: '1rem'
+                    },
+                },
+            }
+        }
+    </script>
 </head>
 
-<body>
-    <div class="container d-md-flex justify-content-md-center" style="margin-top: 25px;">
-        <div class="col-md-6 col-lg-5 col-xl-5">
-            {% if order_status == 'success' %}
-                <div class="alert alert-primary" role="alert">
-                    Order successful! Thanks for subscribing :3
-                </div>
-            {% elif order_status == 'cancel' %}
-                <div class="alert alert-danger" role="alert">
-                    Order didn't complete! But thats okay :|
-                </div>
-            {% endif %}
-            <div class="card">
-                <div class="card-body"><img src="{{ url_for('static', filename='img/banner-light.png') }}" style="width: 100%;">
-                    {% if is_root %}
-                        <div style="margin-top: 10px;border-bottom: 2px solid var(--bs-gray);"></div>
-                        <h4 style="margin-top: 10px;">Admin area</h4>
-                        <h5 style="margin-top: 5px;">Add product</h5>
-                        <form action="/admin/add" method="POST">
-                            <input placeholder="Display Name" type="text" class="form-control" name="name" required>
-                            <input placeholder="Price (in dollars)" type="text" class="form-control" name="price" required>
-                            <input placeholder="Discord role ID" type="text" class="form-control" name="role_id" required>
-                            <textarea style="width: 100%;" name="description" class="form-control" placeholder="Product description"></textarea>
-                            <br>
+<body class="bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4] flex h-screen justify-center items-center">
+    <div class="container flex justify-center">
+        <div class="basis-9/12">
+            <div class="flex flex-col gap-3 items-center bg-[#101010] text-white p-10 shadow-md">
+                {% if order_status == 'success' %}
+                    <div class="w-full px-4 py-2 font-semibold text-center bg-green-500 shadow-md self-center">
+                        <i class="fas fa-check-circle"></i>&nbsp;Subscription Successful! You have been granted your role in our Discord Server.
+                    </div>
+                {% elif order_status == 'cancel' %}
+                    <div class="w-full px-4 py-2 font-semibold text-center bg-red-500 shadow-md self-center">
+                        <i class="fas fa-exclamation-circle"></i>&nbsp;Subscription Unsuccessful! Contact a staff member if this persists.
+                    </div>
+                {% endif %}
 
-                            <button type="submit" class="btn btn-primary">Add</button>
-                        </form>
-                    {% endif %}
-                    {% if 'discord' in session %}
-                        <p style="margin-top: 10px;margin-bottom: 0;text-align: center;">
-                            Welcome <strong>{{ session['discord']['username'] }}&nbsp;</strong>
-                            -&nbsp;<a class="link-info" href="/discord/logout">Logout</a>
-                        </p>
-                    {% else %}
-                        <a class="btn btn-primary" href="/discord/login" style="margin-top: 10px;width: 100%;"><i class="fas fa-sign-in-alt"></i>&nbsp;Login with Discord</a>
-                    {% endif %}
-                    <div style="margin-top: 10px;border-bottom: 2px solid var(--bs-gray);"></div>
+                <img class="w-1/2" src="{{ logo_url }}">
+
+                {% if 'discord' in session %}
+                    <p>
+                        Welcome <span class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]">{{ session['discord']['username'] }}</span>
+                        -
+                        <a class="px-2 py-1 font-semibold text-center bg-red-500 hover:bg-red-400 shadow-md" href="/discord/logout">
+                            <i class="fas fa-sign-out-alt"></i>&nbsp;Logout
+                        </a>
+                    </p>
+                {% else %}
+                    <a class="px-4 py-2 font-semibold text-center bg-[#5865F2] hover:scale-110 ease-out duration-300 shadow-md w-52" href="/discord/login">
+                        <i class="fab fa-discord"></i>&nbsp;Login with Discord
+                    </a>
+                {% endif %}
+
+                {% if is_root %}
+                    <div class="w-full h-1 bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]"></div>
+
+                    <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]">Admin Area</h1>
+                    <h3 class="text-3xl font-extrabold text-white">Add a Product</h3>
+
+                    <form class="flex flex-col gap-3" action="/admin/add" method="POST">
+                        <input placeholder="Display Name" type="text" class="w-full py-2 px-3 text-gray shadow-md focus:outline-none focus:ring focus:ring-[#00a4dc] bg-[#181a1b]" name="name" required>
+
+                        <div class="flex flex-col lg:flex-row gap-3">
+                            <input placeholder="Price" type="number" class="lg:w-1/2 py-2 px-3 text-gray shadow-md focus:outline-none focus:ring focus:ring-[#766ad0] bg-[#181a1b]" name="price" required>
+
+                            <input placeholder="Discord Role ID" type="text" class="lg:w-1/2 py-2 px-3 text-gray shadow-md focus:outline-none focus:ring focus:ring-[#766ad0] bg-[#181a1b]" name="role_id" required>
+                        </div>
+
+                        <textarea class="w-full py-2 px-3 text-gray shadow-md focus:outline-none focus:ring focus:ring-[#a85cc4] bg-[#181a1b]" name="description" placeholder="Product Description"></textarea>
+
+                        <button type="submit" class="px-4 py-2 font-semibold text-center bg-green-500 hover:scale-110 ease-out duration-300 shadow-md self-center">
+                            <i class="fas fa-plus-circle"></i>&nbsp;Add Product
+                        </button>
+                    </form>
+                {% endif %}
+
+                <div class="w-full h-1 bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]"></div>
+
+                <div class="flex flex-row justify-center gap-3">
                     {% for product in products %}
-                        <div class="card package">
-                            <div class="card-body">
-                                <h4 class="card-title">{{ product['name'] }}</h4>
-                                <p>{{ product['description'] }}</p>
-                                {% if 'discord' in session %}
-                                    {% if product['product_id'] not in active_products %}
-                                        <form action="/subscription/{{ product['product_id'] }}" method="POST">
-                                            <button class="btn btn-primary" type="submit" style="width: 100%;">Buy for <span style="font-weight: bold;">{{ product['price'] }} {{ currency }}</span></button>
-                                        </form>
-                                    {% else %}
-                                        <a class="btn btn-primary" href="/portal" style="width: 100%;">Manage subscription</a>
-                                    {% endif %}
-                                {% else %}
-                                    <button class="btn btn-primary" disabled style="width: 100%;">Please log in</button>
-                                {% endif %}
-                                {% if is_root %}
-                                    <form style="margin-top: 10px;" action="/admin/delete/{{ product['product_id'] }}" method="POST">
-                                        <button class="btn btn-danger" type="submit" style="width: 100%;">Delete product</button>
+                        <div class="lg:w-1/2 flex flex-col gap-2 text-center items-center p-5 shadow-md focus:outline-none focus:ring focus:ring-[#00a4dc] bg-[#181a1b]">
+                            <h1 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]">{{ product['name'] }}</h1>
+                            <p>{{ product['description'] }}</p>
+
+                            {% if 'discord' in session %}
+                                {% if product['product_id'] not in active_products %}
+                                    <form action="/subscription/{{ product['product_id'] }}" method="POST">
+                                        <button class="px-4 py-2 font-semibold text-center bg-green-500 hover:scale-110 ease-out duration-300 shadow-md self-center" type="submit">
+                                            <i class="fas fa-credit-card"></i>&nbsp;Buy for {{ currency }}{{ product['price'] }}
+                                        </button>
                                     </form>
+                                {% else %}
+                                <a class="px-4 py-2 font-semibold text-center bg-amber-600 hover:scale-110 ease-out duration-300 shadow-md self-center" href="/portal">
+                                    <i class="fas fa-cogs"></i>&nbsp;Manage Subscription
+                                </a>
                                 {% endif %}
-                            </div>
+                            {% else %}
+                                <button class="px-4 py-2 font-semibold text-center bg-green-900 shadow-md self-center" disabled>Sign in to Purchase</button>
+                            {% endif %}
+
+                            {% if is_root %}
+                                <form action="/admin/delete/{{ product['product_id'] }}" method="POST">
+                                    <button class="px-4 py-2 font-semibold text-center bg-red-500 hover:scale-110 ease-out duration-300 shadow-md self-center" type="submit">
+                                        <i class="fas fa-trash"></i>&nbsp;Delete Product
+                                    </button>
+                                </form>
+                            {% endif %}
                         </div>
                     {% endfor %}
                 </div>
             </div>
         </div>
     </div>
-    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
 </body>
 
 </html>
