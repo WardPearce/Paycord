@@ -46,3 +46,15 @@ export STRIPE_API_KEY="..."
 ![screenshot 1](https://cdn.discordapp.com/attachments/927646781670576259/931081467956719676/unknown.png)
 ![screenshot 2](https://cdn.discordapp.com/attachments/927646781670576259/931081556905312276/unknown.png)
 ![screenshot 3](https://cdn.discordapp.com/attachments/927646781670576259/931081819548450826/unknown.png)
+
+## Thanks to
+- [Flask](https://pypi.org/project/Flask/) by Armin Ronacher
+- [Werkzeug](https://pypi.org/project/Werkzeug/) by Armin Ronacher
+- [Jinja](https://pypi.org/project/Jinja/) by Armin Ronacher
+- [itsdangerous](https://pypi.org/project/itsdangerous/) by Armin Ronacher
+- [click](https://pypi.org/project/click/) by Armin Ronacher
+- [stripe](https://pypi.org/project/stripe/) by Stripe
+- [Authlib](https://pypi.org/project/Authlib/) by Hsiaoming Yang
+- [cryptography](https://pypi.org/project/cryptography/) by The Python Cryptographic Authority and individual contributors
+- [tinydb](https://pypi.org/project/tinydb/) by Markus Siemens
+- [certifi](https://pypi.org/project/certifi/) by Kenneth Reitz
