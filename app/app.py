@@ -120,9 +120,10 @@ def logout():
 
 @app.route("/discord/authorize")
 def authorize():
-    token = discord.authorize_access_token()
-    user = discord.get("/api/users/@me", token=token).json()
-    session["discord"] = user
+    if "error" not in request.args:
+        token = discord.authorize_access_token()
+        user = discord.get("/api/users/@me", token=token).json()
+        session["discord"] = user
     return redirect("/")
 
 
