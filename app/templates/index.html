@@ -39,7 +39,7 @@
                     </div>
                 {% endif %}
 
-                <img class="w-1/2" src="{{ logo_url }}">
+                <a href="/"><img class="w-1/2" src="{{ logo_url }}"></a>
 
                 {% if 'discord' in session %}
                     <p>
@@ -79,10 +79,9 @@
                 {% endif %}
 
                 <div class="w-full h-1 bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]"></div>
-
-                <div class="flex flex-row justify-center gap-3">
+                <div class="w-full flex flex-wrap justify-center gap-3">
                     {% for product in products %}
-                        <div class="lg:w-1/2 flex flex-col gap-2 text-center items-center p-5 shadow-md focus:outline-none focus:ring focus:ring-[#00a4dc] bg-[#181a1b]">
+                        <div class="w-full lg:w-[49%] flex flex-col gap-2 text-center items-center p-5 shadow-md focus:outline-none focus:ring focus:ring-[#00a4dc] bg-[#181a1b]">
                             <h1 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]">{{ product['name'] }}</h1>
                             <p>{{ product['description'] }}</p>
 
