@@ -13,6 +13,7 @@ from uuid import uuid4
 from currency_symbols import CurrencySymbols
 
 
+CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 DISCORD_API_URL = os.getenv("DISCORD_API_URL", "https://discord.com/api")
 CURRENCY = os.getenv("CURRENCY", "USD")
 PAGE_NAME = os.getenv("PAGE_NAME", "Paycord")
@@ -24,7 +25,7 @@ SUBSCRIPTION_INTERVAL = int(os.getenv("SUBSCRIPTION_INTERVAL", 1))
 
 app = Flask(__name__)
 oauth = OAuth(app)
-db = TinyDB("paycord_db.json")
+db = TinyDB(os.path.join(CURRENT_DIR, "paycord_db.json"))
 
 app.secret_key = secrets.token_urlsafe(54)
 stripe.api_key = os.environ["STRIPE_API_KEY"]
