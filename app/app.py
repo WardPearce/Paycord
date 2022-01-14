@@ -209,6 +209,10 @@ def cancel():
 @app.route("/event", methods=["POST"])
 def event():
     payload = request.data
+
+    if "STRIPE_SIGNATURE" not in request.headers:
+        abort(400)
+
     signature = request.headers["STRIPE_SIGNATURE"]
     try:
         event = stripe.Webhook.construct_event(
