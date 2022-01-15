@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build -t paycord.service .
+docker build -t paycord.service ./

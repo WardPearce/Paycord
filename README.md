@@ -8,7 +8,7 @@ Paid roles for discord using Stripe, Python, Flask & Docker.
 - On discord developer portal, go OAuth2 ➡️ General ➡️ Redirects ➡️ "myUrlHere/discord/authorize".
 - Invite discord bot to guild.
 - `sudo docker pull wardpearce/paycord:latest`
-- `sudo docker run -d -p 56733:80 --name paycord -v $PWD:/app/app -e DISCORD_CLIENT_ID="..." -e DISCORD_CLIENT_SECRET="..." -e DISCORD_BOT_TOKEN="..." -e DISCORD_GUILD_ID="..." -e ROOT_DISCORD_IDS="...,..." -e STRIPE_WEBHOOK_SECRET="..." -e STRIPE_API_KEY="..." -e LOGO_URL="https://i.imgur.com/d5SBQ6v.png" -e PAGE_NAME="Paycord" wardpearce/paycord`
+- `docker run -d -v ./app -p 56733:80 --name paycord -e DISCORD_CLIENT_ID="..." -e DISCORD_CLIENT_SECRET="..." -e DISCORD_BOT_TOKEN="..." -e DISCORD_GUILD_ID="..." -e ROOT_DISCORD_IDS="...,..." -e STRIPE_WEBHOOK_SECRET="..." -e STRIPE_API_KEY="..." -e LOGO_URL="https://i.imgur.com/d5SBQ6v.png" -e PAGE_NAME="Paycord" wardpearce/paycord`
 - Proxy exposed port.
 - Ensure Discord roles for products is below Discord bot.
 ### Development
