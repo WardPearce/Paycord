@@ -1,5 +1,5 @@
 # Welcome to Paycord
-Paid roles for discord using Stripe, Python, Flask & Docker.
+Easily monetize your Discord roles with Paycord using Docker, Stripe & Flask.
 
 ## Setup
 ### Production
