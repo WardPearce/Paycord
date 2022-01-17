@@ -1,5 +1,5 @@
 # Welcome to Paycord
-Easily monetize your Discord roles with Paycord using Docker, Stripe & Flask.
+Paid roles for discord using Stripe, Python, Flask & Docker.
 
 ## Setup
 ### Production
@@ -39,7 +39,7 @@ export STRIPE_API_KEY="..."
     - Comma separated list of Discord user IDs who can add & remove products.
 - STRIPE_WEBHOOK_SECRET - required
 - STRIPE_API_KEY - required
-- MESSAGE_ON_COMPLETE - optional, by default "Thank you {username} for subscribing to {name} for {currency_symbol}{price}"
+- MESSAGE_ON_COMPLETE - optional, by default `"Thank you {username} for subscribing to {name} for {currency_symbol}{price}"`
     - Leave as blank ("") to disable.
     - **Supported parameters**
         - id
@@ -66,12 +66,12 @@ export STRIPE_API_KEY="..."
             - Currency of product.
         - currency_symbol
             - Symbol of currency.
-- CURRENCY - optional, by default "USD" ([Supported currencies](https://stripe.com/docs/currencies))
-- DISCORD_API_URL - optional, by default "https://discord.com/api"
-- LOGO_URL - optional, by default "https://i.imgur.com/d5SBQ6v.png"
-- PAGE_NAME - optional, by default "Paycord"
-- SUBSCRIPTION_RECURRENCE - optional, by default "month" ([Supported recurrences](https://stripe.com/docs/api/prices/object#price_object-recurring))
-- SUBSCRIPTION_INTERVAL - optional, by default 1
+- CURRENCY - optional, by default `"USD"` ([Supported currencies](https://stripe.com/docs/currencies))
+- DISCORD_API_URL - optional, by default `"https://discord.com/api"`
+- LOGO_URL - optional, by default `"https://i.imgur.com/d5SBQ6v.png"`
+- PAGE_NAME - optional, by default `"Paycord"`
+- SUBSCRIPTION_RECURRENCE - optional, by default `"month"` ([Supported recurrences](https://stripe.com/docs/api/prices/object#price_object-recurring))
+- SUBSCRIPTION_INTERVAL - optional, by default `1`
 
 ## TODOs
 - Allow one package to have multiple roles.
