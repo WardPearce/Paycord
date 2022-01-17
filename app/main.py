@@ -21,6 +21,13 @@ LOGO_URL = os.getenv("LOGO_URL", "https://i.imgur.com/d5SBQ6v.png")
 ROOT_DISCORD_IDS = os.environ["ROOT_DISCORD_IDS"].split(",")
 SUBSCRIPTION_RECURRENCE = os.getenv("SUBSCRIPTION_RECURRENCE", "month")
 SUBSCRIPTION_INTERVAL = int(os.getenv("SUBSCRIPTION_INTERVAL", 1))
+MESSAGE_ON_COMPLETE = os.getenv(
+    "MESSAGE_ON_COMPLETE",
+    "Thank you {username} for subscribing to {name} for {currency_symbol}{price}"  # noqa: E501
+)
+DISCORD_HEADER = {
+    "Authorization": f"Bot {os.environ['DISCORD_BOT_TOKEN']}"
+}
 
 
 app = Flask(__name__)
@@ -223,7 +230,7 @@ def event():
     except Exception:
         abort(400)
 
-    def format_url(discord_id: str, role_id: str) -> str:
+    def format_role_url(discord_id: str, role_id: str) -> str:
         return (f"{DISCORD_API_URL}/"
                 f"guilds/{os.environ['DISCORD_GUILD_ID']}"
                 f"/members/{discord_id}/roles/{role_id}")
@@ -233,28 +240,61 @@ def event():
             event["data"]["object"].id
         )).metadata
 
-        requests.put(
-            format_url(metadata["discord_id"], metadata["role_id"]),
-            headers={"Authorization": f"Bot {os.environ['DISCORD_BOT_TOKEN']}"}
-        )
-
         db.table("subscriptions").insert({
             **metadata,
             "subscription_id": event["data"]["object"].subscription,
         })
+
+        requests.put(
+            format_role_url(metadata["discord_id"], metadata["role_id"]),
+            headers=DISCORD_HEADER
+        )
+
+        if MESSAGE_ON_COMPLETE:
+            channel = requests.post(
+                f"{DISCORD_API_URL}/users/@me/channels",
+                json={"recipient_id": metadata["discord_id"]},
+                headers=DISCORD_HEADER
+            )
+            if channel.status_code == 200:
+                product = db.table("products").search(
+                    where("product_id") == metadata["product_id"]
+                )
+                if not product:
+                    product = {}
+                else:
+                    product = product[0]
+
+                channel_data = channel.json()
+                requests.post(
+                    (f"{DISCORD_API_URL}/channels/{channel_data['id']}"
+                     "/messages"),
+                    json={
+                        "content": MESSAGE_ON_COMPLETE.format_map(
+                            {
+                                **channel_data["recipients"][0],
+                                **product,
+                                "currency": CURRENCY,
+                                "currency_symbol": CurrencySymbols.get_symbol(
+                                    CURRENCY
+                                )
+                            }
+                        )
+                    },
+                    headers=DISCORD_HEADER
+                )
+
     elif event["type"] == "customer.subscription.deleted":
         subscription = db.table("subscriptions").search(
             where("subscription_id") == event["data"]["object"].id
         )
         if subscription:
             requests.delete(
-                format_url(
+                format_role_url(
                     subscription[0]["discord_id"],
                     subscription[0]["role_id"]
                 ),
-                headers={
-                    "Authorization": f"Bot {os.environ['DISCORD_BOT_TOKEN']}"
-                }
+                headers=DISCORD_HEADER
             )
             db.table("subscriptions").remove(
                 where("subscription_id") == event["data"]["object"].id

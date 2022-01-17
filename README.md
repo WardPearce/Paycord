@@ -39,6 +39,33 @@ export STRIPE_API_KEY="..."
     - Comma separated list of Discord user IDs who can add & remove products.
 - STRIPE_WEBHOOK_SECRET - required
 - STRIPE_API_KEY - required
+- MESSAGE_ON_COMPLETE - optional, by default "Thank you {username} for subscribing to {name} for {currency_symbol}{price}"
+    - Leave as blank ("") to disable.
+    - **Supported parameters**
+        - id
+            - User's discord snowflake ID.
+        - username
+            - User's discord username.
+        - avatar
+            - User's avatar hash.
+        - discriminator
+            - User's discriminator.
+        - public_flags
+            - User's pubic flags.
+        - product_id
+            - ID of product brought
+        - name
+            - Name of product brought.
+        - price
+            - Price of product brought.
+        - description
+            - Description of product brought.
+        - role_id
+            - Role ID of product brought.
+        - currency
+            - Currency of product.
+        - currency_symbol
+            - Symbol of currency.
 - CURRENCY - optional, by default "USD" ([Supported currencies](https://stripe.com/docs/currencies))
 - DISCORD_API_URL - optional, by default "https://discord.com/api"
 - LOGO_URL - optional, by default "https://i.imgur.com/d5SBQ6v.png"
