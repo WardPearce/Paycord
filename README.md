@@ -7,8 +7,6 @@ Paid roles for discord using Stripe, Python, Flask & Docker.
 - On stripe dashboard, go Settings ➡️ Customer portal ➡️ Ensure "Update subscriptions" is all disabled ➡️ then update your "Business information"
 - On discord developer portal, go OAuth2 ➡️ General ➡️ Redirects ➡️ "myUrlHere/discord/authorize".
 - Invite discord bot to guild.
-- `sudo docker pull wardpearce/paycord:latest`
-- `docker run -d -v ./app -p 56733:80 --name paycord -e DISCORD_CLIENT_ID="..." -e DISCORD_CLIENT_SECRET="..." -e DISCORD_BOT_TOKEN="..." -e DISCORD_GUILD_ID="..." -e ROOT_DISCORD_IDS="...,..." -e STRIPE_WEBHOOK_SECRET="..." -e STRIPE_API_KEY="..." -e LOGO_URL="https://i.imgur.com/d5SBQ6v.png" -e PAGE_NAME="Paycord" wardpearce/paycord`
 - Proxy exposed port.
 - Ensure Discord roles for products is below Discord bot.
 ### Development
@@ -24,6 +22,7 @@ export ROOT_DISCORD_IDS="...,..."
 export STRIPE_WEBHOOK_SECRET="..."
 export STRIPE_API_KEY="..."
 ```
+- Run mongodb server.
 - `python app.py` to run.
 
 ## Environment variables
@@ -66,18 +65,21 @@ export STRIPE_API_KEY="..."
             - Currency of product.
         - currency_symbol
             - Symbol of currency.
+- MONTHLY_GOAL - optional, by default `0.0` (Disabled)
 - CURRENCY - optional, by default `"USD"` ([Supported currencies](https://stripe.com/docs/currencies))
 - DISCORD_API_URL - optional, by default `"https://discord.com/api"`
 - LOGO_URL - optional, by default `"https://i.imgur.com/d5SBQ6v.png"`
 - PAGE_NAME - optional, by default `"Paycord"`
 - SUBSCRIPTION_RECURRENCE - optional, by default `"month"` ([Supported recurrences](https://stripe.com/docs/api/prices/object#price_object-recurring))
 - SUBSCRIPTION_INTERVAL - optional, by default `1`
+- MONGO_IP - optional, by default `"localhost"`
+- MONGO_PORT - optional, by default `27017`
+- MONGO_DB - optional, by default `"paycord"`
 
 ## TODOs
 - Allow one package to have multiple roles.
 - Form validation for root users (Didn't think this was super important, but would be nice to implement with wtforms.)
 - Allow upgrading of packages.
-- Maybe move away from `tinydb` to `mongodb`.
 
 ## Screenshots
 ![Screenshot 1](https://i.imgur.com/brlMepv.png)
@@ -93,6 +95,7 @@ export STRIPE_API_KEY="..."
 - [stripe](https://pypi.org/project/stripe/) by Stripe
 - [Authlib](https://pypi.org/project/Authlib/) by Hsiaoming Yang
 - [cryptography](https://pypi.org/project/cryptography/) by The Python Cryptographic Authority and individual contributors
-- [tinydb](https://pypi.org/project/tinydb/) by Markus Siemens
+- [requests](https://pypi.org/project/requests/) by Kenneth Reitz
 - [certifi](https://pypi.org/project/certifi/) by Kenneth Reitz
 - [currency-symbols](https://pypi.org/project/currency-symbols/) by Arshad Kazmi
+- [pymongo](https://pypi.org/project/pymongo/) by The MongoDB Python Team

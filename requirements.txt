@@ -1,6 +1,6 @@
 flask
 stripe
 authlib
-tinydb
 requests
 currency-symbols
+pymongo

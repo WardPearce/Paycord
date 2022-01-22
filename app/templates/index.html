@@ -78,6 +78,12 @@
                     </form>
                 {% endif %}
 
+                {% if monthly_goal %}
+                    <div class="w-full h-1 bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]"></div>
+                    <h2>Monthly goal</h2>
+                    <h3>{{ currently_at }} / {{ monthly_goal }}</h3>
+                {% endif %}
+
                 <div class="w-full h-1 bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]"></div>
                 <div class="w-full flex flex-wrap justify-center gap-3">
                     {% for product in products %}
@@ -86,7 +92,7 @@
                             <p>{{ product['description'] }}</p>
 
                             {% if 'discord' in session %}
-                                {% if product['product_id'] not in active_products %}
+                                {% if product['product_id'] not in product_ids %}
                                     <form action="/subscription/{{ product['product_id'] }}" method="POST">
                                         <button class="px-4 py-2 font-semibold text-center bg-green-500 hover:scale-110 ease-out duration-300 shadow-md self-center" type="submit">
                                             <i class="fas fa-credit-card"></i>&nbsp;Buy for {{ currency }}{{ product['price'] }}
