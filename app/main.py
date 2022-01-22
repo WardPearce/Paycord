@@ -7,15 +7,15 @@ from flask import (
     Flask, render_template, abort, redirect, request, url_for, session
 )
 from functools import wraps
-from tinydb import TinyDB, where
+from pymongo import MongoClient
 from authlib.integrations.flask_client import OAuth
 from uuid import uuid4
 from currency_symbols import CurrencySymbols
 
 
-CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 DISCORD_API_URL = os.getenv("DISCORD_API_URL", "https://discord.com/api")
 CURRENCY = os.getenv("CURRENCY", "USD")
+CURRENCY_SYMBOL = CurrencySymbols.get_symbol(CURRENCY)
 PAGE_NAME = os.getenv("PAGE_NAME", "Paycord")
 LOGO_URL = os.getenv("LOGO_URL", "https://i.imgur.com/d5SBQ6v.png")
 ROOT_DISCORD_IDS = os.environ["ROOT_DISCORD_IDS"].split(",")
@@ -32,7 +32,10 @@ DISCORD_HEADER = {
 
 app = Flask(__name__)
 oauth = OAuth(app)
-db = TinyDB(os.path.join(CURRENT_DIR, "paycord_db.json"))
+mongo = MongoClient(
+    os.getenv("MONGO_IP", "localhost"),
+    os.getenv("MONGO_PORT", 27017)
+)[os.getenv("MONGO_DB", "paycord")]
 
 app.secret_key = secrets.token_urlsafe(54)
 stripe.api_key = os.environ["STRIPE_API_KEY"]
@@ -64,7 +67,7 @@ def root_required(func_):
 @root_required
 def admin_add():
     payload = request.form
-    db.table("products").insert({
+    mongo.product.insert_one({
         "product_id": str(uuid4()),
         "name": payload["name"],
         "price": payload["price"],
@@ -77,36 +80,35 @@ def admin_add():
 @app.route("/admin/delete/<product_id>", methods=["POST"])
 @root_required
 def admin_delete(product_id: str):
-    db.table("products").remove(where("product_id") == product_id)
+    mongo.product.delete_one({"product_id": product_id})
     return redirect("/")
 
 
 @app.route("/")
 def index():
     if "discord" in session:
-        user = db.table("user").search(
-            where("discord_id") == session["discord"]["id"]
-        )
-        active_products = [
-            sub["product_id"] for sub in
-            db.table("subscriptions").search(
-                where("discord_id") == session["discord"]["id"]
-            )
-        ]
+        user = mongo.user.find_one({
+            "discord_id": session["discord"]["id"]
+        })
+        if user:
+            subscriptions = [
+                sub["product_id"] for sub in user["subscriptions"]
+            ]
+        else:
+            subscriptions = []
+
         is_root = session["discord"]["id"] in ROOT_DISCORD_IDS
     else:
-        user = None
         is_root = False
-        active_products = []
+        subscriptions = []
 
     return render_template(
         "index.html",
         session=session,
-        user=user,
-        active_products=active_products,
+        subscriptions=subscriptions,
         is_root=is_root,
-        products=db.table("products").all(),
-        currency=CurrencySymbols.get_symbol(CURRENCY),
+        products=mongo.product.find(),
+        currency=CURRENCY_SYMBOL,
         page_name=PAGE_NAME,
         logo_url=LOGO_URL,
         order_status=request.args.get("order", None)
@@ -139,12 +141,12 @@ def portal():
     if "discord" not in session:
         abort(403)
 
-    user = db.table("user").search(
-        where("discord_id") == session["discord"]["id"]
-    )
+    user = mongo.user.find_one({
+        "discord_id": session["discord"]["id"]
+    })
     if user:
         billing_session = stripe.billing_portal.Session.create(
-            customer=user[0]["customer_id"],
+            customer=user["customer_id"],
             return_url=url_for("index", _external=True)
         )
         return redirect(billing_session.url)
@@ -157,34 +159,37 @@ def order(product_id: str):
     if "discord" not in session:
         abort(403)
 
-    product = db.table("products").search(where("product_id") == product_id)
+    product = mongo.product.find_one({
+        "product_id": product_id
+    })
     if not product:
         abort(404)
 
     metadata = {
         "discord_id": session["discord"]["id"],
-        "role_id": product[0]["role_id"],
+        "role_id": product["role_id"],
         "product_id": product_id
     }
 
-    user = db.table("user").search(
-        where("discord_id") == session["discord"]["id"]
-    )
+    user = mongo.user.find_one({
+        "discord_id": session["discord"]["id"]
+    })
     if not user:
         customer = stripe.Customer.create(metadata=metadata)
-        db.table("user").insert({
+        mongo.user.insert_one({
             "discord_id": session["discord"]["id"],
-            "customer_id": customer.id
+            "customer_id": customer.id,
+            "subscriptions": []
         })
         customer_id = customer.id
     else:
-        customer_id = user[0]["customer_id"]
+        customer_id = user["customer_id"]
 
     checkout_session = stripe.checkout.Session.create(
         line_items=[{
             "price_data": {
-                "product_data": {"name": product[0]["name"]},
-                "unit_amount": int(int(product[0]["price"]) / 0.01),
+                "product_data": {"name": product["name"]},
+                "unit_amount": int(int(product["price"]) / 0.01),
                 "currency": CURRENCY,
                 "recurring": {
                     "interval": SUBSCRIPTION_RECURRENCE,
@@ -240,10 +245,13 @@ def event():
             event["data"]["object"].id
         )).metadata
 
-        db.table("subscriptions").insert({
-            **metadata,
+        mongo.user.update_one({
+            "discord_id": metadata["discord_id"]
+        }, {"$push": {"subscriptions": {
             "subscription_id": event["data"]["object"].subscription,
-        })
+            "role_id": metadata["role_id"],
+            "product_id": metadata["product_id"]
+        }}})
 
         requests.put(
             format_role_url(metadata["discord_id"], metadata["role_id"]),
@@ -257,13 +265,11 @@ def event():
                 headers=DISCORD_HEADER
             )
             if channel.status_code == 200:
-                product = db.table("products").search(
-                    where("product_id") == metadata["product_id"]
-                )
+                product = mongo.product.find_one({
+                    "product_id": metadata["product_id"]
+                })
                 if not product:
                     product = {}
-                else:
-                    product = product[0]
 
                 channel_data = channel.json()
                 requests.post(
@@ -275,9 +281,7 @@ def event():
                                 **channel_data["recipients"][0],
                                 **product,
                                 "currency": CURRENCY,
-                                "currency_symbol": CurrencySymbols.get_symbol(
-                                    CURRENCY
-                                )
+                                "currency_symbol": CURRENCY_SYMBOL
                             }
                         )
                     },
@@ -285,19 +289,24 @@ def event():
                 )
 
     elif event["type"] == "customer.subscription.deleted":
-        subscription = db.table("subscriptions").search(
-            where("subscription_id") == event["data"]["object"].id
-        )
-        if subscription:
+        sub_find = {
+            "subscriptions.subscription_id": {
+                "$in": [event["data"]["object"].id]
+            }
+        }
+        user = mongo.user.find_one(sub_find)
+        if user:
             requests.delete(
                 format_role_url(
-                    subscription[0]["discord_id"],
-                    subscription[0]["role_id"]
+                    user["discord_id"],
+                    user["subscriptions"][0]["role_id"]
                 ),
                 headers=DISCORD_HEADER
             )
-            db.table("subscriptions").remove(
-                where("subscription_id") == event["data"]["object"].id
+
+            mongo.user.update_one(
+                {"subscriptions": {"$in": [event["data"]["object"].id]}},
+                {"$pull": sub_find}
             )
 
     return {"success": True}

@@ -24,6 +24,7 @@ export ROOT_DISCORD_IDS="...,..."
 export STRIPE_WEBHOOK_SECRET="..."
 export STRIPE_API_KEY="..."
 ```
+- Run mongodb server.
 - `python app.py` to run.
 
 ## Environment variables
@@ -72,12 +73,14 @@ export STRIPE_API_KEY="..."
 - PAGE_NAME - optional, by default `"Paycord"`
 - SUBSCRIPTION_RECURRENCE - optional, by default `"month"` ([Supported recurrences](https://stripe.com/docs/api/prices/object#price_object-recurring))
 - SUBSCRIPTION_INTERVAL - optional, by default `1`
+- MONGO_IP - optional, by default `"localhost"`
+- MONGO_PORT - optional, by default `27017`
+- MONGO_DB - optional, by default `"paycord"`
 
 ## TODOs
 - Allow one package to have multiple roles.
 - Form validation for root users (Didn't think this was super important, but would be nice to implement with wtforms.)
 - Allow upgrading of packages.
-- Maybe move away from `tinydb` to `mongodb`.
 
 ## Screenshots
 ![Screenshot 1](https://i.imgur.com/brlMepv.png)
