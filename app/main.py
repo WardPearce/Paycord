@@ -24,6 +24,11 @@ ROOT_DISCORD_IDS = os.environ["ROOT_DISCORD_IDS"].split(",")
 SUBSCRIPTION_RECURRENCE = os.getenv("SUBSCRIPTION_RECURRENCE", "month")
 SUBSCRIPTION_INTERVAL = int(os.getenv("SUBSCRIPTION_INTERVAL", 1))
 MONTHLY_GOAL = float(os.getenv("MONTHLY_GOAL", 0.0))
+MONTHLY_GOAL_PARAGRAPH = os.getenv(
+    "MONTHLY_GOAL_PARAGRAPH",
+    ("The goal below indicates how much our services cost a month to run.\nYou"
+     "can help support our service by purchasing one of the packages below.")
+)
 MESSAGE_ON_COMPLETE = os.getenv(
     "MESSAGE_ON_COMPLETE",
     "Thank you {username} for subscribing to {name} for {currency_symbol}{price}"  # noqa: E501
@@ -131,6 +136,7 @@ def index():
         currency=CURRENCY_SYMBOL,
         page_name=PAGE_NAME,
         logo_url=LOGO_URL,
+        monthly_goal_paragraph=MONTHLY_GOAL_PARAGRAPH,
         monthly_goal=MONTHLY_GOAL,
         currently_at=currently_at,
         order_status=request.args.get("order", None)
