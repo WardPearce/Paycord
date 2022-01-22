@@ -322,17 +322,13 @@ def event():
             "subscription_id": event["data"]["object"].id
         })
         if subscription:
-            sub = mongo.subscription.find_one({
-                "discord_id": subscription["discord_id"]
-            })
-            if sub:
-                requests.delete(
-                    format_role_url(
-                        subscription["discord_id"],
-                        sub["role_id"]
-                    ),
-                    headers=DISCORD_HEADER
-                )
+            requests.delete(
+                format_role_url(
+                    subscription["discord_id"],
+                    subscription["role_id"]
+                ),
+                headers=DISCORD_HEADER
+            )
 
             mongo.subscription.delete_one({
                 "subscription_id": event["data"]["object"].id
