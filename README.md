@@ -67,6 +67,7 @@ export STRIPE_API_KEY="..."
             - Currency of product.
         - currency_symbol
             - Symbol of currency.
+- MONTHLY_GOAL - optional, by default `0.0` (Disabled)
 - CURRENCY - optional, by default `"USD"` ([Supported currencies](https://stripe.com/docs/currencies))
 - DISCORD_API_URL - optional, by default `"https://discord.com/api"`
 - LOGO_URL - optional, by default `"https://i.imgur.com/d5SBQ6v.png"`
@@ -96,6 +97,7 @@ export STRIPE_API_KEY="..."
 - [stripe](https://pypi.org/project/stripe/) by Stripe
 - [Authlib](https://pypi.org/project/Authlib/) by Hsiaoming Yang
 - [cryptography](https://pypi.org/project/cryptography/) by The Python Cryptographic Authority and individual contributors
-- [tinydb](https://pypi.org/project/tinydb/) by Markus Siemens
+- [requests](https://pypi.org/project/requests/) by Kenneth Reitz
 - [certifi](https://pypi.org/project/certifi/) by Kenneth Reitz
 - [currency-symbols](https://pypi.org/project/currency-symbols/) by Arshad Kazmi
+- [pymongo](https://pypi.org/project/pymongo/) by The MongoDB Python Team

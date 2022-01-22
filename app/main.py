@@ -2,6 +2,7 @@ import stripe
 import requests
 import os
 import secrets
+import calendar
 
 from flask import (
     Flask, render_template, abort, redirect, request, url_for, session
@@ -22,6 +23,7 @@ LOGO_URL = os.getenv("LOGO_URL", "https://i.imgur.com/d5SBQ6v.png")
 ROOT_DISCORD_IDS = os.environ["ROOT_DISCORD_IDS"].split(",")
 SUBSCRIPTION_RECURRENCE = os.getenv("SUBSCRIPTION_RECURRENCE", "month")
 SUBSCRIPTION_INTERVAL = int(os.getenv("SUBSCRIPTION_INTERVAL", 1))
+MONTHLY_GOAL = float(os.getenv("MONTHLY_GOAL", 0.0))
 MESSAGE_ON_COMPLETE = os.getenv(
     "MESSAGE_ON_COMPLETE",
     "Thank you {username} for subscribing to {name} for {currency_symbol}{price}"  # noqa: E501
@@ -92,24 +94,45 @@ def index():
             "discord_id": session["discord"]["id"]
         })
         if user:
-            subscriptions = user["subscriptions"]
+            product_ids = user["product_ids"]
         else:
-            subscriptions = []
+            product_ids = []
 
         is_root = session["discord"]["id"] in ROOT_DISCORD_IDS
     else:
         is_root = False
-        subscriptions = []
+        product_ids = []
+
+    currently_at = 0.0
+    if MONTHLY_GOAL:
+        now = datetime.now()
+        subscriptions = mongo.subscription.aggregate([{
+            "$match": {"$and": [
+                {"created": {"$gte": now.replace(day=1)}},
+                {"created": {
+                    "$lte": now.replace(
+                        day=calendar.monthrange(now.year, now.month)[1]
+                    )
+                }}
+            ]},
+        }, {
+            "$group": {"_id": None, "total": {"$sum": "$price"}}
+        }])
+
+        for sub in subscriptions:
+            currently_at = sub["total"]
 
     return render_template(
         "index.html",
         session=session,
-        subscriptions=subscriptions,
+        product_ids=product_ids,
         is_root=is_root,
         products=mongo.product.find(),
         currency=CURRENCY_SYMBOL,
         page_name=PAGE_NAME,
         logo_url=LOGO_URL,
+        monthly_goal=MONTHLY_GOAL,
+        currently_at=currently_at,
         order_status=request.args.get("order", None)
     )
 
@@ -178,7 +201,7 @@ def order(product_id: str):
         mongo.user.insert_one({
             "discord_id": session["discord"]["id"],
             "customer_id": customer.id,
-            "subscriptions": []
+            "product_ids": []
         })
         customer_id = customer.id
     else:
@@ -240,19 +263,22 @@ def event():
                 f"/members/{discord_id}/roles/{role_id}")
 
     if event["type"] == "checkout.session.completed":
-        metadata = (stripe.checkout.Session.retrieve(
+        subscription = stripe.checkout.Session.retrieve(
             event["data"]["object"].id
-        )).metadata
+        )
+
+        metadata = subscription.metadata
 
         mongo.user.update_one({
             "discord_id": metadata["discord_id"]
-        }, {"$push": {"subscriptions": event["data"]["object"].subscription}})
+        }, {"$push": {"product_ids": metadata["product_id"]}})
 
         mongo.subscription.insert_one({
             "discord_id": metadata["discord_id"],
             "subscription_id": event["data"]["object"].subscription,
             "role_id": metadata["role_id"],
             "product_id": metadata["product_id"],
+            "price": subscription["amount_total"] * 0.01,
             "created": datetime.now()
         })
 
@@ -292,28 +318,30 @@ def event():
                 )
 
     elif event["type"] == "customer.subscription.deleted":
-        sub_find = {
-            "subscriptions": {
-                "$in": [event["data"]["object"].id]
-            }
-        }
-        user = mongo.user.find_one(sub_find)
-        if user:
+        subscription = mongo.subscription.find_one({
+            "subscription_id": event["data"]["object"].id
+        })
+        if subscription:
             sub = mongo.subscription.find_one({
-                "discord_id": user["discord_id"]
+                "discord_id": subscription["discord_id"]
             })
             if sub:
                 requests.delete(
                     format_role_url(
-                        user["discord_id"],
+                        subscription["discord_id"],
                         sub["role_id"]
                     ),
                     headers=DISCORD_HEADER
                 )
 
+            mongo.subscription.delete_one({
+                "subscription_id": event["data"]["object"].id
+            })
             mongo.user.update_one(
-                sub_find,
-                {"$pull": sub_find}
+                {"discord_id": subscription["discord_id"]},
+                {"$pull": {
+                    "product_ids": {"$in": [subscription["product_id"]]}
+                }}
             )
 
     return {"success": True}
