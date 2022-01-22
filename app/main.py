@@ -3,6 +3,7 @@ import requests
 import os
 import secrets
 import calendar
+import sys
 
 from flask import (
     Flask, render_template, abort, redirect, request, url_for, session
@@ -43,7 +44,14 @@ oauth = OAuth(app)
 mongo = MongoClient(
     os.getenv("MONGO_IP", "localhost"),
     int(os.getenv("MONGO_PORT", 27017))
-)[os.getenv("MONGO_DB", "paycord")]
+)
+
+try:
+    mongo.server_info()
+except Exception:
+    sys.exit("No mongo connection")
+
+mongo = mongo[os.getenv("MONGO_DB", "paycord")]
 
 app.secret_key = secrets.token_urlsafe(54)
 stripe.api_key = os.environ["STRIPE_API_KEY"]
