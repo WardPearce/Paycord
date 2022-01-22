@@ -1,0 +1,35 @@
+version: '3'
+services:
+  mongo:
+    image: mongo
+    restart: always
+
+    networks:
+      - paycord
+    volumes:
+      - ./mongo:/docker-entrypoint-initdb.d
+
+  flask:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "56733:80"
+    environment:
+      - DISCORD_CLIENT_ID="..."
+      - DISCORD_CLIENT_SECRET="..."
+      - DISCORD_BOT_TOKEN="..."
+      - DISCORD_GUILD_ID="..."
+      - ROOT_DISCORD_IDS="...,..."
+      - STRIPE_WEBHOOK_SECRET="..."
+      - STRIPE_API_KEY="..."
+      - LOGO_URL="https://i.imgur.com/d5SBQ6v.png"
+      - PAGE_NAME="Paycord"
+    depends_on:
+      - mongo
+    networks:
+      - paycord
+
+networks:
+  paycord:
+    driver: bridge
