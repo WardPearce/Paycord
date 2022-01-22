@@ -64,10 +64,10 @@
     </script>
 </head>
 
-<body class="bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4] flex h-screen justify-center items-center">
+<body class="bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4] flex justify-center items-center">
     <div class="container flex justify-center">
-        <div class="basis-9/12">
-            <div class="flex flex-col gap-3 items-center bg-[#101010] text-white p-10 shadow-md">
+        <div class="lg:basis-9/12">
+            <div class="flex flex-col gap-3 items-center bg-[#101010] text-white p-5 lg:p-10 my-5 lg:my-32 shadow-md">
                 {% if order_status == 'success' %}
                     <div class="w-full px-4 py-2 font-semibold text-center bg-green-500 shadow-md self-center">
                         <i class="fas fa-check-circle"></i>&nbsp;Subscription Successful! You have been granted your role in our Discord Server.
@@ -97,8 +97,8 @@
                 {% if is_root %}
                     <div class="w-full h-1 bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]"></div>
 
-                    <h1 class="text-5xl font-extrabold leading-normal text-transparent bg-clip-text bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]">Admin Area</h1>
-                    <h3 class="text-3xl font-extrabold text-white">Add a Product</h3>
+                    <h1 class="text-5xl text-center font-extrabold leading-normal text-transparent bg-clip-text bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]">Admin Area</h1>
+                    <h3 class="text-3xl text-center font-extrabold text-white">Add a Product</h3>
 
                     <form class="flex flex-col gap-3" action="/admin/add" method="POST">
                         <input placeholder="Display Name" type="text" class="w-full py-2 px-3 text-gray shadow-md focus:outline-none focus:ring focus:ring-[#00a4dc] bg-[#181a1b]" name="name" required>
@@ -122,10 +122,10 @@
 
                     <div class="w-full h-1 bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]"></div>
 
-                    <h1 class="text-4xl font-extrabold leading-normal text-transparent bg-clip-text bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]">Monthly Goal</h1>
+                    <h1 class="text-4xl text-center font-extrabold leading-normal text-transparent bg-clip-text bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]">Monthly Goal</h1>
 
                     <div class="flex flex-col text-center gap-1">
-                        <span style="white-space: pre-line">{{ monthly_goal_paragraph }}</span>
+                        <span class="whitespace-pre-line">{{ monthly_goal_paragraph }}</span>
                         <span class="text-2xl font-extrabold text-white">{{ currency ~ currently_at|int }} / {{ currency ~ monthly_goal|int }}</span>
                     </div>
 
