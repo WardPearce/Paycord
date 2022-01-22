@@ -11,6 +11,7 @@ from pymongo import MongoClient
 from authlib.integrations.flask_client import OAuth
 from uuid import uuid4
 from currency_symbols import CurrencySymbols
+from datetime import datetime
 
 
 DISCORD_API_URL = os.getenv("DISCORD_API_URL", "https://discord.com/api")
@@ -91,9 +92,7 @@ def index():
             "discord_id": session["discord"]["id"]
         })
         if user:
-            subscriptions = [
-                sub["product_id"] for sub in user["subscriptions"]
-            ]
+            subscriptions = user["subscriptions"]
         else:
             subscriptions = []
 
@@ -247,11 +246,15 @@ def event():
 
         mongo.user.update_one({
             "discord_id": metadata["discord_id"]
-        }, {"$push": {"subscriptions": {
+        }, {"$push": {"subscriptions": event["data"]["object"].subscription}})
+
+        mongo.subscription.insert_one({
+            "discord_id": metadata["discord_id"],
             "subscription_id": event["data"]["object"].subscription,
             "role_id": metadata["role_id"],
-            "product_id": metadata["product_id"]
-        }}})
+            "product_id": metadata["product_id"],
+            "created": datetime.now()
+        })
 
         requests.put(
             format_role_url(metadata["discord_id"], metadata["role_id"]),
@@ -290,22 +293,26 @@ def event():
 
     elif event["type"] == "customer.subscription.deleted":
         sub_find = {
-            "subscriptions.subscription_id": {
+            "subscriptions": {
                 "$in": [event["data"]["object"].id]
             }
         }
         user = mongo.user.find_one(sub_find)
         if user:
-            requests.delete(
-                format_role_url(
-                    user["discord_id"],
-                    user["subscriptions"][0]["role_id"]
-                ),
-                headers=DISCORD_HEADER
-            )
+            sub = mongo.subscription.find_one({
+                "discord_id": user["discord_id"]
+            })
+            if sub:
+                requests.delete(
+                    format_role_url(
+                        user["discord_id"],
+                        sub["role_id"]
+                    ),
+                    headers=DISCORD_HEADER
+                )
 
             mongo.user.update_one(
-                {"subscriptions": {"$in": [event["data"]["object"].id]}},
+                sub_find,
                 {"$pull": sub_find}
             )
 
