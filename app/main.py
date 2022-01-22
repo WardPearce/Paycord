@@ -27,7 +27,7 @@ SUBSCRIPTION_INTERVAL = int(os.getenv("SUBSCRIPTION_INTERVAL", 1))
 MONTHLY_GOAL = float(os.getenv("MONTHLY_GOAL", 0.0))
 MONTHLY_GOAL_PARAGRAPH = os.getenv(
     "MONTHLY_GOAL_PARAGRAPH",
-    ("The goal below indicates how much our services cost a month to run.\nYou"
+    ("The goal below indicates how much our services cost a month to run.\nYou "
      "can help support our service by purchasing one of the packages below.")
 )
 MESSAGE_ON_COMPLETE = os.getenv(
