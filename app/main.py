@@ -42,7 +42,7 @@ app = Flask(__name__)
 oauth = OAuth(app)
 mongo = MongoClient(
     os.getenv("MONGO_IP", "localhost"),
-    os.getenv("MONGO_PORT", 27017)
+    int(os.getenv("MONGO_PORT", 27017))
 )[os.getenv("MONGO_DB", "paycord")]
 
 app.secret_key = secrets.token_urlsafe(54)
