@@ -8,7 +8,7 @@ Paid roles for discord using Stripe, Python, Flask & Docker.
 - On discord developer portal, go OAuth2 ➡️ General ➡️ Redirects ➡️ "myUrlHere/discord/authorize".
 - Invite discord bot to guild.
 - Git clone this repo
-- sudo docker-compose build; sudo docker-compose up -d
+- `sudo docker-compose build; sudo docker-compose up -d`
 - Proxy exposed port.
 - Ensure Discord roles for products is below Discord bot.
 ### Development
