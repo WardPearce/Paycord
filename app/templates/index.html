@@ -118,11 +118,7 @@
                 {% endif %}
 
                 {% if monthly_goal %}
-                    {% if currently_at >= monthly_goal %}
-                        {% set percentage = 100 %}
-                    {% else %}
-                        {% set percentage = ((currently_at / monthly_goal) * 100)|int if currently_at > 0 else 0.0 %}
-                    {% endif %}
+                    {% set percentage = ((currently_at / monthly_goal) * 100)|int if currently_at > 0 else 0 %}
 
                     <div class="w-full h-1 bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]"></div>
 
@@ -134,7 +130,7 @@
                     </div>
 
                     <div class="w-full lg:w-1/2 h-6 text-gray shadow-md bg-[#181a1b]">
-                        <div class="h-6 text-right pr-3 animate-pulse bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4] animate-gradient-xy" style="width: {{ percentage }}%">{{ percentage }}%</div>
+                        <div class="h-6 text-right pr-3 animate-pulse bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4] animate-gradient-xy" style="width: {{ percentage if percentage < 100 else 100 }}%">{{ percentage }}%</div>
                     </div>
                 {% endif %}
 
