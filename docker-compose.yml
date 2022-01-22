@@ -10,9 +10,7 @@ services:
       - ./mongo:/docker-entrypoint-initdb.d
 
   flask:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: wardpearce/paycord
     ports:
       - "56733:80"
     environment:

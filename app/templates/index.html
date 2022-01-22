@@ -118,7 +118,11 @@
                 {% endif %}
 
                 {% if monthly_goal %}
-                    {% set percentage = ((currently_at / monthly_goal) * 100)|int if currently_at > 0 else 0.0 %}
+                    {% if currently_at >= monthly_goal %}
+                        {% set percentage = 100 %}
+                    {% else %}
+                        {% set percentage = ((currently_at / monthly_goal) * 100)|int if currently_at > 0 else 0.0 %}
+                    {% endif %}
 
                     <div class="w-full h-1 bg-gradient-to-r from-[#00a4dc] via-[#766ad0] to-[#a85cc4]"></div>
 
