@@ -7,6 +7,8 @@ Paid roles for discord using Stripe, Python, Flask & Docker.
 - On stripe dashboard, go Settings ➡️ Customer portal ➡️ Ensure "Update subscriptions" is all disabled ➡️ then update your "Business information"
 - On discord developer portal, go OAuth2 ➡️ General ➡️ Redirects ➡️ "myUrlHere/discord/authorize".
 - Invite discord bot to guild.
+- Git clone this repo
+- `sudo docker-compose build; sudo docker-compose up -d`
 - Proxy exposed port.
 - Ensure Discord roles for products is below Discord bot.
 ### Development
@@ -66,6 +68,7 @@ export STRIPE_API_KEY="..."
         - currency_symbol
             - Symbol of currency.
 - MONTHLY_GOAL - optional, by default `0.0` (Disabled)
+- MONTHLY_GOAL_PARAGRAPH - optional, by default `"The goal below indicates how much our services cost a month to run.\nYou can help support our service by purchasing one of the packages below."`
 - CURRENCY - optional, by default `"USD"` ([Supported currencies](https://stripe.com/docs/currencies))
 - DISCORD_API_URL - optional, by default `"https://discord.com/api"`
 - LOGO_URL - optional, by default `"https://i.imgur.com/d5SBQ6v.png"`
