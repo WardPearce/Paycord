@@ -25,14 +25,14 @@ jobs:
           # stop the build if there are Python syntax errors or undefined names
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude .git,__pycache__,docs/source/conf.py,old,build,dist
           # exit-zero treats all errors as warnings
-          flake8 . --count --max-line-length=80 --statistics --exclude .git,__pycache__,docs/source/conf.py,old,build,dist
+          flake8 app/. --count --max-line-length=80 --statistics --exclude .git,__pycache__,docs/source/conf.py,old,build,dist
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
       - name: Install pyright
         run: npm install pyright -g
       - name: Run pyright
-        run: pyright *
+        run: pyright app/*
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
