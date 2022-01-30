@@ -75,6 +75,8 @@ export STRIPE_API_KEY="..."
 - PAGE_NAME - optional, by default `"Paycord"`
 - SUBSCRIPTION_RECURRENCE - optional, by default `"month"` ([Supported recurrences](https://stripe.com/docs/api/prices/object#price_object-recurring))
 - SUBSCRIPTION_INTERVAL - optional, by default `1`
+- DISCORD_WEBHOOK - optional, by default disabled
+    - Provide a discord webhook to push alerts for new & cancelled subscriptions.
 - MONGO_IP - optional, by default `"localhost"`
 - MONGO_PORT - optional, by default `27017`
 - MONGO_DB - optional, by default `"paycord"`

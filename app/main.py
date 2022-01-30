@@ -13,6 +13,7 @@ from authlib.integrations.flask_client import OAuth
 from uuid import uuid4
 from currency_symbols import CurrencySymbols
 from datetime import datetime
+from discord_webhook import DiscordWebhook, DiscordEmbed
 
 
 DISCORD_API_URL = os.getenv("DISCORD_API_URL", "https://discord.com/api")
@@ -36,6 +37,7 @@ MESSAGE_ON_COMPLETE = os.getenv(
 DISCORD_HEADER = {
     "Authorization": f"Bot {os.environ['DISCORD_BOT_TOKEN']}"
 }
+DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK", None)
 
 
 app = Flask(__name__)
@@ -276,12 +278,14 @@ def event():
             "discord_id": metadata["discord_id"]
         }, {"$push": {"product_ids": metadata["product_id"]}})
 
+        price_in_dollars = subscription["amount_total"] * 0.01
+
         mongo.subscription.insert_one({
             "discord_id": metadata["discord_id"],
             "subscription_id": event["data"]["object"].subscription,
             "role_id": metadata["role_id"],
             "product_id": metadata["product_id"],
-            "price": subscription["amount_total"] * 0.01,
+            "price": price_in_dollars,
             "created": datetime.now()
         })
 
@@ -290,6 +294,12 @@ def event():
             headers=DISCORD_HEADER
         )
 
+        product = mongo.product.find_one({
+            "product_id": metadata["product_id"]
+        })
+        if not product:
+            product = {}
+
         if MESSAGE_ON_COMPLETE:
             channel = requests.post(
                 f"{DISCORD_API_URL}/users/@me/channels",
@@ -297,12 +307,6 @@ def event():
                 headers=DISCORD_HEADER
             )
             if channel.status_code == 200:
-                product = mongo.product.find_one({
-                    "product_id": metadata["product_id"]
-                })
-                if not product:
-                    product = {}
-
                 channel_data = channel.json()
                 requests.post(
                     (f"{DISCORD_API_URL}/channels/{channel_data['id']}"
@@ -319,6 +323,24 @@ def event():
                     },
                     headers=DISCORD_HEADER
                 )
+
+        if DISCORD_WEBHOOK:
+            embed = DiscordEmbed(
+                title=f"New subscription for {PAGE_NAME}",
+                description=(f"<@{metadata['discord_id']}> subscribed to"
+                             f" **{product.get('name', '**Deleted**')}**"
+                             f" *({metadata['product_id']})*"
+                             f" for **{CURRENCY_SYMBOL}{price_in_dollars}**"
+                             f"\n\nRole <@&{metadata['role_id']}> added"),
+                color="4ee51b"
+            )
+            embed.set_author(name=PAGE_NAME)
+            embed.set_thumbnail(url=LOGO_URL)
+            embed.set_timestamp()
+
+            webhook = DiscordWebhook(url=DISCORD_WEBHOOK)
+            webhook.add_embed(embed)
+            webhook.execute()
 
     elif event["type"] == "customer.subscription.deleted":
         subscription = mongo.subscription.find_one({
@@ -342,6 +364,30 @@ def event():
                     "product_ids": {"$in": [subscription["product_id"]]}
                 }}
             )
+
+            if DISCORD_WEBHOOK:
+                product = mongo.product.find_one({
+                    "product_id": subscription["product_id"]
+                })
+                if not product:
+                    product = {}
+
+                embed = DiscordEmbed(
+                    title=f"Subscription cancelled for {PAGE_NAME}",
+                    description=(f"<@{subscription['discord_id']}> unsubscribed to"  # noqa: E501
+                                 f" **{product.get('name', '**Deleted**')}**"  # noqa: E501
+                                 f" *({product.get('product_id', '**Deleted**')})*"  # noqa: E501
+                                 f"\n\nRole <@&{subscription['role_id']}> removed"  # noqa: E501
+                                 ),
+                    color="e5301b"
+                )
+                embed.set_author(name=PAGE_NAME)
+                embed.set_thumbnail(url=LOGO_URL)
+                embed.set_timestamp()
+
+                webhook = DiscordWebhook(url=DISCORD_WEBHOOK)
+                webhook.add_embed(embed)
+                webhook.execute()
 
     return {"success": True}
 
