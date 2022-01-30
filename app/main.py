@@ -336,6 +336,7 @@ def event():
             )
             embed.set_author(name=PAGE_NAME)
             embed.set_thumbnail(url=LOGO_URL)
+            embed.set_timestamp()
 
             webhook = DiscordWebhook(url=DISCORD_WEBHOOK)
             webhook.add_embed(embed)
@@ -382,6 +383,7 @@ def event():
                 )
                 embed.set_author(name=PAGE_NAME)
                 embed.set_thumbnail(url=LOGO_URL)
+                embed.set_timestamp()
 
                 webhook = DiscordWebhook(url=DISCORD_WEBHOOK)
                 webhook.add_embed(embed)
