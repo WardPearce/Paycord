@@ -80,11 +80,9 @@ def api_products():
 
 @app.route("/api/active/<discord_id>", methods=["GET"])
 def api_active_discord(discord_id: str):
-    active = mongo.subscription.count({
+    return {"active": mongo.subscription.count_documents({
         "discord_id": discord_id
-    })
-
-    return {"active": active > 0}
+    }) > 0}
 
 
 def root_required(func_):
