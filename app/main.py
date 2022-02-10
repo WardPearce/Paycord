@@ -14,6 +14,7 @@ from uuid import uuid4
 from currency_symbols import CurrencySymbols
 from datetime import datetime
 from discord_webhook import DiscordWebhook, DiscordEmbed
+from bson.json_util import dumps
 
 
 DISCORD_API_URL = os.getenv("DISCORD_API_URL", "https://discord.com/api")
@@ -66,6 +67,24 @@ discord = oauth.register(
     api_base_url=DISCORD_API_URL,
     client_kwargs={"scope": "identify"}
 )
+
+
+@app.route("/api/products", methods=["GET"])
+def api_products():
+    return app.response_class(
+        dumps(list(mongo.product.find())),
+        200,
+        mimetype="application/json"
+    )
+
+
+@app.route("/api/active/<discord_id>", methods=["GET"])
+def api_active_discord(discord_id: str):
+    active = mongo.subscription.count({
+        "discord_id": discord_id
+    })
+
+    return {"active": active > 0}
 
 
 def root_required(func_):
@@ -347,14 +366,6 @@ def event():
             "subscription_id": event["data"]["object"].id
         })
         if subscription:
-            requests.delete(
-                format_role_url(
-                    subscription["discord_id"],
-                    subscription["role_id"]
-                ),
-                headers=DISCORD_HEADER
-            )
-
             mongo.subscription.delete_one({
                 "subscription_id": event["data"]["object"].id
             })
@@ -363,6 +374,14 @@ def event():
                 {"$pull": {
                     "product_ids": {"$in": [subscription["product_id"]]}
                 }}
+            )
+
+            requests.delete(
+                format_role_url(
+                    subscription["discord_id"],
+                    subscription["role_id"]
+                ),
+                headers=DISCORD_HEADER
             )
 
             if DISCORD_WEBHOOK:
@@ -393,4 +412,4 @@ def event():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=8888)
