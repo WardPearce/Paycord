@@ -1,33 +1,45 @@
 version: '3'
 services:
-  mongo:
-    image: mongo
-    restart: always
-
-    networks:
-      - paycord
-    volumes:
-      - ./mongo:/docker-entrypoint-initdb.d
-
   flask:
     image: wardpearce/paycord
+    restart: unless-stopped
     ports:
       - "56733:80"
     environment:
-      - DISCORD_CLIENT_ID="..."
-      - DISCORD_CLIENT_SECRET="..."
-      - DISCORD_BOT_TOKEN="..."
-      - DISCORD_GUILD_ID="..."
-      - ROOT_DISCORD_IDS="...,..."
-      - STRIPE_WEBHOOK_SECRET="..."
-      - STRIPE_API_KEY="..."
-      - LOGO_URL="https://i.imgur.com/d5SBQ6v.png"
-      - PAGE_NAME="Paycord"
+      DISCORD_CLIENT_ID: "..."
+      DISCORD_CLIENT_SECRET: "..."
+      DISCORD_BOT_TOKEN: "..."
+      DISCORD_GUILD_ID: "..."
+      ROOT_DISCORD_IDS: "...,..."
+      STRIPE_WEBHOOK_SECRET: "..."
+      STRIPE_API_KEY: "..."
+      LOGO_URL: "https://i.imgur.com/d5SBQ6v.png"
+      PAGE_NAME: "Paycord"
+      MONGO_IP: "mongodb"
+      
     depends_on:
-      - mongo
+      - mongodb
     networks:
-      - paycord
+      - backend
+
+  mongodb:
+    image: mongo:4.0.8
+    container_name: mongodb
+    restart: unless-stopped
+    environment:
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
+    volumes:
+      - mongodbdata:/data/db
+    networks:
+      - backend
 
 networks:
-  paycord:
+  backend:
     driver: bridge
+
+volumes:
+  mongodbdata:
+    driver: local
+  appdata:
+    driver: local
