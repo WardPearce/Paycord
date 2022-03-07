@@ -20,7 +20,6 @@ MESSAGE_ON_COMPLETE = os.getenv(
 
 def run_on_complete(product: dict, subscription: Any) -> None:
     metadata = subscription.metadata
-    price_in_dollars = subscription["amount_total"] * 0.01
 
     if MESSAGE_ON_COMPLETE:
         channel = requests.post(
@@ -46,23 +45,25 @@ def run_on_complete(product: dict, subscription: Any) -> None:
                 headers=DISCORD_HEADER
             )
 
-        if DISCORD_WEBHOOK:
-            embed = DiscordEmbed(
-                title=f"New subscription for {PAGE_NAME}",
-                description=(f"<@{metadata['discord_id']}> subscribed to"
-                             f" **{product.get('name', '**Deleted**')}**"
-                             f" *({metadata['product_id']})*"
-                             f" for **{CURRENCY_SYMBOL}{price_in_dollars}**"
-                             f"\n\nRole <@&{metadata['role_id']}> added"),
-                color="4ee51b"
-            )
-            embed.set_author(name=PAGE_NAME)
-            embed.set_thumbnail(url=LOGO_URL)
-            embed.set_timestamp()
+    if DISCORD_WEBHOOK:
+        price_in_dollars = subscription["amount_total"] * 0.01
 
-            webhook = DiscordWebhook(url=DISCORD_WEBHOOK)
-            webhook.add_embed(embed)
-            webhook.execute()
+        embed = DiscordEmbed(
+            title=f"New subscription for {PAGE_NAME}",
+            description=(f"<@{metadata['discord_id']}> subscribed to"
+                         f" **{product.get('name', '**Deleted**')}**"
+                         f" *({metadata['product_id']})*"
+                         f" for **{CURRENCY_SYMBOL}{price_in_dollars}**"
+                         f"\n\nRole <@&{metadata['role_id']}> added"),
+            color="4ee51b"
+        )
+        embed.set_author(name=PAGE_NAME)
+        embed.set_thumbnail(url=LOGO_URL)
+        embed.set_timestamp()
+
+        webhook = DiscordWebhook(url=DISCORD_WEBHOOK)
+        webhook.add_embed(embed)
+        webhook.execute()
 
 
 def run_on_delete(product: dict, subscription: Any) -> None:
