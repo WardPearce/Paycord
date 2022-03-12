@@ -16,7 +16,6 @@ services:
       LOGO_URL: "https://i.imgur.com/d5SBQ6v.png"
       PAGE_NAME: "Paycord"
       MONGO_IP: "mongodb"
-      
     depends_on:
       - mongodb
     networks:
@@ -40,6 +39,4 @@ networks:
 
 volumes:
   mongodbdata:
-    driver: local
-  appdata:
     driver: local
