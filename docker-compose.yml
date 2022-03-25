@@ -17,8 +17,10 @@ services:
       MONTHLY_GOAL_PARAGRAPH: "The goal below indicates how much our services cost a month to run.\nYou can help support our service by purchasing one of the packages below."
       THIRD_PARTY_MODULES: "paycord.built_ins.discord"
       MONGO_IP: "mongodb"
-      DISCORD_BOT_TOKEN: "..."
-      ROOT_DISCORD_IDS: "..."
+      DISCORD_BOT_TOKEN: ""
+      ROOT_DISCORD_IDS: ""
+      DISCORD_WEBHOOK: "" # Leave blank to disable
+      MESSAGE_ON_COMPLETE: "Thank you {username} for subscribing to {name} for {currency_symbol}{price}"
     depends_on:
       - mongodb
     networks:

@@ -9,19 +9,16 @@ from discord_webhook import DiscordWebhook, DiscordEmbed
 from currency_symbols import CurrencySymbols
 from typing import Any
 
-CURRENCY = os.getenv("CURRENCY")
-PAGE_NAME = os.getenv("PAGE_NAME")
-LOGO_URL = os.getenv("LOGO_URL")
+CURRENCY = os.environ["CURRENCY"]
+PAGE_NAME = os.environ["PAGE_NAME"]
+LOGO_URL = os.environ["LOGO_URL"]
 CURRENCY_SYMBOL = CurrencySymbols.get_symbol(CURRENCY)
-DISCORD_API_URL = os.getenv("DISCORD_API_URL")
+DISCORD_API_URL = os.environ["DISCORD_API_URL"]
 DISCORD_HEADER = {
     "Authorization": f"Bot {os.environ['DISCORD_BOT_TOKEN']}"
 }
-DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK", None)
-MESSAGE_ON_COMPLETE = os.getenv(
-    "MESSAGE_ON_COMPLETE",
-    "Thank you {username} for subscribing to {name} for {currency_symbol}{price}"  # noqa: E501
-)
+DISCORD_WEBHOOK = os.environ["DISCORD_WEBHOOK"]
+MESSAGE_ON_COMPLETE = os.environ["MESSAGE_ON_COMPLETE"]
 
 
 def checkout_session_completed(product: dict, subscription: Any) -> None:
