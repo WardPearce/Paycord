@@ -17,7 +17,7 @@ MONTHLY_GOAL_PARAGRAPH = os.getenv(
      "can help support our service by purchasing one of the packages below.")
 )
 THIRD_PARTY_MODULES = os.getenv(
-    "THIRD_PARTY_MODULES", "app.built_ins.discord"
+    "THIRD_PARTY_MODULES", "paycord.built_ins.discord"
 ).split(",")
 DISCORD_HEADER = {
     "Authorization": f"Bot {os.environ['DISCORD_BOT_TOKEN']}"

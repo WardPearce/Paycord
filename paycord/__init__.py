@@ -17,7 +17,7 @@ blueprints = [api_blueprint, admin_blueprint, discord_blueprint,
 for blueprint in blueprints:
     app.register_blueprint(blueprint)
 
-app.secret_key = secrets.token_urlsafe(54)
+app.secret_key = secrets.token_urlsafe(24)
 
 
 __all__ = [

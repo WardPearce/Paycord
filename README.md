@@ -80,6 +80,8 @@ export STRIPE_API_KEY="..."
 - MONGO_IP - optional, by default `"localhost"`
 - MONGO_PORT - optional, by default `27017`
 - MONGO_DB - optional, by default `"paycord"`
+- THIRD_PARTY_MODULES - optional, by default `"paycord.built_ins.discord"`
+    - Third party modules to run on subscription events, currently look at [paycord/built_ins/discord.py](/paycord/built_ins/discord.py) for a example.
 
 ## TODOs
 - Allow one package to have multiple roles.

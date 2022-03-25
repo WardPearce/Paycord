@@ -1,5 +1,6 @@
 import requests
 import os
+import threading
 
 from flask import (
     abort, request, Blueprint
@@ -77,9 +78,10 @@ def event():
             product = {}
 
         for module in modules:
-            if hasattr(module, "run_on_complete"):
-                getattr(module, "run_on_complete")(
-                    product, subscription
+            if hasattr(module, "checkout_session_completed"):
+                threading.Thread(
+                    target=getattr(module, "checkout_session_completed"),
+                    args=(product, subscription)
                 )
 
     elif event["type"] == "customer.subscription.deleted":
@@ -112,9 +114,12 @@ def event():
                 product = {}
 
             for module in modules:
-                if hasattr(module, "run_on_delete"):
-                    getattr(module, "run_on_delete")(
-                        product, subscription
+                if hasattr(module, "customer_subscription_deleted"):
+                    threading.Thread(
+                        target=getattr(
+                            module, "customer_subscription_deleted"
+                        ),
+                        args=(product, subscription)
                     )
 
     return {"success": True}

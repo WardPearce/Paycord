@@ -18,7 +18,18 @@ MESSAGE_ON_COMPLETE = os.getenv(
 )
 
 
-def run_on_complete(product: dict, subscription: Any) -> None:
+def checkout_session_completed(product: dict, subscription: Any) -> None:
+    """Called when Stripe sends checkout.session.completed event.
+
+    Parameters
+    ----------
+    product : dict
+        Product data from mongo db.
+    subscription : Any
+        Stripe subscription object
+        https://stripe.com/docs/api/subscriptions/object
+    """
+
     metadata = subscription.metadata
 
     if MESSAGE_ON_COMPLETE:
@@ -66,7 +77,18 @@ def run_on_complete(product: dict, subscription: Any) -> None:
         webhook.execute()
 
 
-def run_on_delete(product: dict, subscription: Any) -> None:
+def customer_subscription_deleted(product: dict, subscription: Any) -> None:
+    """Called when Stripe sends checkout.subscription.deleted event.
+
+    Parameters
+    ----------
+    product : dict
+        Product data from mongo db.
+    subscription : Any
+        Stripe subscription object
+        https://stripe.com/docs/api/subscriptions/object
+    """
+
     if DISCORD_WEBHOOK:
         embed = DiscordEmbed(
             title=f"Subscription cancelled for {PAGE_NAME}",
