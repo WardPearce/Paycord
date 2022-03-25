@@ -18,3 +18,8 @@ for blueprint in blueprints:
     app.register_blueprint(blueprint)
 
 app.secret_key = secrets.token_urlsafe(54)
+
+
+__all__ = [
+    "app"
+]
