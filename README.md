@@ -82,6 +82,7 @@ export STRIPE_API_KEY="..."
 - MONGO_DB - optional, by default `"paycord"`
 - THIRD_PARTY_MODULES - optional, by default `"paycord.built_ins.discord"`
     - Third party modules to run on subscription events, currently look at [paycord/built_ins/discord.py](/paycord/built_ins/discord.py) for a example.
+    - Separate modules with `,` e.g. `module.file,module.file`
 
 ## TODOs
 - Allow one package to have multiple roles.
