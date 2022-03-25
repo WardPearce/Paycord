@@ -1,16 +1,22 @@
+"""Built-ins are built like they're external modules.
+Code reusability from rest of project isn't done.
+"""
+
 import os
 import requests
 
 from discord_webhook import DiscordWebhook, DiscordEmbed
+from currency_symbols import CurrencySymbols
 from typing import Any
 
-
-from ..env import (
-    DISCORD_HEADER, DISCORD_API_URL,
-    CURRENCY, CURRENCY_SYMBOL,
-    PAGE_NAME, LOGO_URL
-)
-
+CURRENCY = os.getenv("CURRENCY")
+PAGE_NAME = os.getenv("PAGE_NAME")
+LOGO_URL = os.getenv("LOGO_URL")
+CURRENCY_SYMBOL = CurrencySymbols.get_symbol(CURRENCY)
+DISCORD_API_URL = os.getenv("DISCORD_API_URL")
+DISCORD_HEADER = {
+    "Authorization": f"Bot {os.environ['DISCORD_BOT_TOKEN']}"
+}
 DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK", None)
 MESSAGE_ON_COMPLETE = os.getenv(
     "MESSAGE_ON_COMPLETE",

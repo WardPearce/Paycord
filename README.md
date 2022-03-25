@@ -15,15 +15,6 @@ Paycord allows you to charge Discord users for Discord roles, Paycord is also ha
 - Git clone this repo.
 - `pip3 install -r requirements.txt`
 - export environment variables in CLI.
-```
-export DISCORD_CLIENT_ID="..."
-export DISCORD_CLIENT_SECRET="..."
-export DISCORD_BOT_TOKEN="..."
-export DISCORD_GUILD_ID="..."
-export ROOT_DISCORD_IDS="...,..."
-export STRIPE_WEBHOOK_SECRET="..."
-export STRIPE_API_KEY="..."
-```
 - Run mongodb server.
 - `python app.py` to run.
 
