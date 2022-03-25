@@ -40,7 +40,7 @@ Paycord allows you to charge Discord users for Discord roles, Paycord is also ha
     - Comma separated list of Discord user IDs who can add & remove products.
 - STRIPE_WEBHOOK_SECRET - required
 - STRIPE_API_KEY - required
-- MESSAGE_ON_COMPLETE - optional, by default `"Thank you {username} for subscribing to {name} for {currency_symbol}{price}"`
+- MESSAGE_ON_COMPLETE
     - Leave as blank ("") to disable.
     - **Supported parameters**
         - id
@@ -67,20 +67,20 @@ Paycord allows you to charge Discord users for Discord roles, Paycord is also ha
             - Currency of product.
         - currency_symbol
             - Symbol of currency.
-- MONTHLY_GOAL - optional, by default `0.0` (Disabled)
-- MONTHLY_GOAL_PARAGRAPH - optional, by default `"The goal below indicates how much our services cost a month to run.\nYou can help support our service by purchasing one of the packages below."`
-- CURRENCY - optional, by default `"USD"` ([Supported currencies](https://stripe.com/docs/currencies))
-- DISCORD_API_URL - optional, by default `"https://discord.com/api"`
-- LOGO_URL - optional, by default `"https://i.imgur.com/d5SBQ6v.png"`
-- PAGE_NAME - optional, by default `"Paycord"`
-- SUBSCRIPTION_RECURRENCE - optional, by default `"month"` ([Supported recurrences](https://stripe.com/docs/api/prices/object#price_object-recurring))
-- SUBSCRIPTION_INTERVAL - optional, by default `1`
-- DISCORD_WEBHOOK - optional, by default disabled
+- MONTHLY_GOAL
+- MONTHLY_GOAL_PARAGRAPH
+- CURRENCY - ([Supported currencies](https://stripe.com/docs/currencies))
+- DISCORD_API_URL
+- LOGO_URL
+- PAGE_NAME
+- SUBSCRIPTION_RECURRENCE - ([Supported recurrences](https://stripe.com/docs/api/prices/object#price_object-recurring))
+- SUBSCRIPTION_INTERVAL
+- DISCORD_WEBHOOK
     - Provide a discord webhook to push alerts for new & cancelled subscriptions.
-- MONGO_IP - optional, by default `"localhost"`
-- MONGO_PORT - optional, by default `27017`
-- MONGO_DB - optional, by default `"paycord"`
-- THIRD_PARTY_MODULES - optional, by default `"paycord.built_ins.discord"`
+- MONGO_IP
+- MONGO_PORT
+- MONGO_DB
+- THIRD_PARTY_MODULES
     - Third party modules to run on subscription events, currently look at [paycord/built_ins/discord.py](/paycord/built_ins/discord.py) for a example.
     - Separate modules with `,` e.g. `module.file,module.file`
 
