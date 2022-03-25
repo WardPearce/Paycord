@@ -28,18 +28,18 @@ Paycord allows you to charge Discord users for Discord roles, Paycord is also ha
 - TBD
 
 ## Environment variables
-- DISCORD_CLIENT_ID - required
+- DISCORD_CLIENT_ID
     - Client ID of OAuth2 from Discord developer portal
-- DISCORD_CLIENT_SECRET - required
+- DISCORD_CLIENT_SECRET
     - Client Secret of OAuth2 from Discord developer portal
-- DISCORD_BOT_TOKEN - required
+- DISCORD_BOT_TOKEN
     - Bot token from Discord developer portal
-- DISCORD_GUILD_ID - required
+- DISCORD_GUILD_ID
     - Enable developer mode & provide the ID for the guild.
-- ROOT_DISCORD_IDS - required
+- ROOT_DISCORD_IDS
     - Comma separated list of Discord user IDs who can add & remove products.
-- STRIPE_WEBHOOK_SECRET - required
-- STRIPE_API_KEY - required
+- STRIPE_WEBHOOK_SECRET
+- STRIPE_API_KEY
 - MESSAGE_ON_COMPLETE
     - Leave as blank ("") to disable.
     - **Supported parameters**
