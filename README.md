@@ -1,5 +1,5 @@
 # Welcome to Paycord
-Paid roles for discord using Stripe, Python, Flask & Docker.
+Paycord allows you to charge Discord users for Discord roles, Paycord is also hackable with a custom event system. The codebase it a bit messy (mainly because I find flask messy.) Built using Docker, Stripe, Flask & Mongo.
 
 ## Setup
 ### Production
