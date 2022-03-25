@@ -1,6 +1,11 @@
 # Welcome to Paycord
 Paycord allows you to charge Discord users for Discord roles, Paycord is also hackable with a custom event system. The codebase it a bit messy (mainly because I find flask messy.) Built using Docker, Stripe, Flask & Mongo.
 
+## Previews
+![Screenshot 1](https://i.imgur.com/brlMepv.png)
+![Screenshot 2](https://i.imgur.com/vVxEAp2.png)
+![Screenshot 3](https://i.imgur.com/qY8AGHQ.png)
+
 ## Setup
 ### Production
 - On stripe dashboard, go Developers ➡️ Webhooks ➡️ Add endpoint ➡️ endpoint URL ➡️ "myUrlHere/event" ➡️ "checkout.session.completed" & "customer.subscription.deleted" events required.
@@ -17,6 +22,10 @@ Paycord allows you to charge Discord users for Discord roles, Paycord is also ha
 - export environment variables in CLI.
 - Run mongodb server.
 - `python main.py` to run dev server.
+
+## Third-party modules
+(Submit a PR to add your third-party module)
+- TBD
 
 ## Environment variables
 - DISCORD_CLIENT_ID - required
@@ -78,11 +87,6 @@ Paycord allows you to charge Discord users for Discord roles, Paycord is also ha
 ## TODOs
 - Allow one package to have multiple roles.
 - Form validation for root users (Didn't think this was super important, but would be nice to implement with wtforms.)
-
-## Screenshots
-![Screenshot 1](https://i.imgur.com/brlMepv.png)
-![Screenshot 2](https://i.imgur.com/vVxEAp2.png)
-![Screenshot 3](https://i.imgur.com/qY8AGHQ.png)
 
 ## Thanks to
 - [Flask](https://pypi.org/project/Flask/) by Armin Ronacher
