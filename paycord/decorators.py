@@ -12,7 +12,7 @@ def root_required(func_):
         if ("discord" not in session or
                 session["discord"]["id"] not in ROOT_DISCORD_IDS):
             abort(403)
-
-        return func_(*args, **kwargs)
+        else:
+            return func_(*args, **kwargs)
 
     return decorated_function

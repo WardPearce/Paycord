@@ -23,6 +23,14 @@ def admin_add():
     return redirect("/")
 
 
+@admin_blueprint.route("/admin/update/<product_id>", methods=["POST"])
+@root_required
+def admin_update(product_id: str):
+    payload = request.form
+    MONGO.product.update_one({"product_id": product_id}, payload)
+    return redirect("/")
+
+
 @admin_blueprint.route("/admin/delete/<product_id>", methods=["POST"])
 @root_required
 def admin_delete(product_id: str):

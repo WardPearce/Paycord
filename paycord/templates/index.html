@@ -163,6 +163,11 @@
                                         <i class="fas fa-trash"></i>&nbsp;Delete Product
                                     </button>
                                 </form>
+
+                                <form action="/admin/update/{{ product['product_id'] }}" method="POST">
+                                    <!-- Add Frontend for updating product
+                                    needs to be posted in a form like this -->
+                                </form>
                             {% endif %}
                         </div>
                     {% endfor %}
