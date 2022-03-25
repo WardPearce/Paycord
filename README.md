@@ -16,7 +16,7 @@ Paycord allows you to charge Discord users for Discord roles, Paycord is also ha
 - `pip3 install -r requirements.txt`
 - export environment variables in CLI.
 - Run mongodb server.
-- `python app.py` to run.
+- `python main.py` to run dev server.
 
 ## Environment variables
 - DISCORD_CLIENT_ID - required
