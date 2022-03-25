@@ -86,7 +86,6 @@ export STRIPE_API_KEY="..."
 ## TODOs
 - Allow one package to have multiple roles.
 - Form validation for root users (Didn't think this was super important, but would be nice to implement with wtforms.)
-- Allow upgrading of packages.
 
 ## Screenshots
 ![Screenshot 1](https://i.imgur.com/brlMepv.png)
