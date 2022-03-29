@@ -1,6 +1,11 @@
 # Welcome to Paycord
 Paid roles for discord using Stripe, Python, Flask & Docker.
 
+## Preview
+![Screenshot 1](https://i.imgur.com/brlMepv.png)
+![Screenshot 2](https://i.imgur.com/vVxEAp2.png)
+![Screenshot 3](https://i.imgur.com/qY8AGHQ.png)
+
 ## Setup
 ### Production
 - On stripe dashboard, go Developers ➡️ Webhooks ➡️ Add endpoint ➡️ endpoint URL ➡️ "myUrlHere/event" ➡️ "checkout.session.completed" & "customer.subscription.deleted" events required.
@@ -85,11 +90,6 @@ export STRIPE_API_KEY="..."
 - Allow one package to have multiple roles.
 - Form validation for root users (Didn't think this was super important, but would be nice to implement with wtforms.)
 - Allow upgrading of packages.
-
-## Screenshots
-![Screenshot 1](https://i.imgur.com/brlMepv.png)
-![Screenshot 2](https://i.imgur.com/vVxEAp2.png)
-![Screenshot 3](https://i.imgur.com/qY8AGHQ.png)
 
 ## Thanks to
 - [Flask](https://pypi.org/project/Flask/) by Armin Ronacher
