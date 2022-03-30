@@ -23,7 +23,7 @@ services:
       - backend
 
   mongodb:
-    image: mongo:4.0.8
+    image: mongo
     container_name: mongodb
     restart: unless-stopped
     environment:
@@ -40,6 +40,4 @@ networks:
 
 volumes:
   mongodbdata:
-    driver: local
-  appdata:
     driver: local
