@@ -1,7 +1,0 @@
-flask
-stripe
-authlib
-requests
-currency-symbols
-pymongo
-discord-webhook
